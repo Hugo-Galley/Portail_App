@@ -4,7 +4,7 @@ import datetime
 import secrets
 class User:
 
-    def __init__(self,nom,prenom,email,num_tel,role,droit):
+    def __init__(self,nom,prenom,email,num_tel,role,droit,login = '',password = ''):
         self.__nom = nom
         self.__prenom = prenom
         self.__email = email
