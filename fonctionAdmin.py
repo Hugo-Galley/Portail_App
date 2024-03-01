@@ -1,11 +1,14 @@
 liste_user = []
 from User import *
+import hashlib
 def add_user():
     print('Ajout d\'un utilisateur')
     user = User(input('Nom : '),input('Prenom : '),input('Email : '),input('Numéro de téléphone : '),input('Role : '),input('Droit : '))
     user.genrate_login()
     user.generate_password(8)
     liste_user.append(user)
+    with open('bdd.txt','a') as file:
+        file.write(user.get_nom() + ' ' + user.get_prenom() + ' ' + user.get_email() + ' ' + user.get_num_tel() + ' ' + user.get_role() + ' ' + user.droit + ' ' + user.get_login() + ' ' + hashlib.sha256(user.get_password().encode()).hexdigest() + '\n')
     print('Utilisateur ajouté avec succès')
 
 def update_user():
@@ -50,10 +53,13 @@ def delete_user():
     print('Utilisateur non trouvé')
 
 def list_users():
-    for user in liste_user:
-        if user in liste_user:
-            print(user.get_nom(),user.get_prenom(),user.get_email(),user.get_num_tel(),user.get_role(),user.droit,user.get_login(),user.get_password())
-
+    with open('bdd.txt','r') as file:
+        data = file.readlines()
+        if len(data) > 0:
+            for user in data:
+                user = user.split(' ')
+                print(f'Nom : {user[0]}\nPrenom : {user[1]}\nEmail : {user[2]}\nNuméro de téléphone : {user[3]}\nRôle : {user[4]}\nDroit : {user[5]}\nLogin : {user[6]}\nMot de passe : {user[7]}')
+                print('-----------------------------------')
         else :
             print('Il n y\'a aucun utilisateurs pour le moment')
             return False
