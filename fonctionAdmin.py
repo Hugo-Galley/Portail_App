@@ -6,14 +6,14 @@ curseur = connexion.cursor()
 liste_user = []
 def add_user():
     print('Ajout d\'un utilisateur')
-    user = User(input('Nom : '),input('Prenom : '),input('Email : '),input('Numéro de téléphone : '),input('Role : '),input('Droit : '))
+    user = User(input('Nom : '),input('Prenom : '),input('Email : '),input('Numéro de téléphone : '),input('Role : '),input('Droit (md : medecin, cm = commerciaux, etc = autre) :'))
     user.genrate_login()
     user.generate_password(8)
     curseur.execute('INSERT INTO users (nom, prenom, email, num_tel, role, droit,login, password) VALUES (?,?,?,?,?,?,?,?)', (user.get_nom(), user.get_prenom(), user.get_email(), user.get_num_tel(), user.get_role(), user.get_droit(), user.get_login(), hashlib.sha256(user.get_password().encode()).hexdigest()))
     connexion.commit()
     with open('bdd.txt','a') as file:
         file.write(user.get_nom() + ' ' + user.get_prenom() + ' ' + user.get_email() + ' ' + user.get_num_tel() + ' ' + user.get_role() + ' ' + user.droit + ' ' + user.get_login() + ' ' + hashlib.sha256(user.get_password().encode()).hexdigest() + '\n')
-    print('Utilisateur ajouté avec succès')
+    print(f'Utilisateur ajouté avec succès dont le login est {user.get_login()} et le mot de passe est {user.get_password()}')
 
 def update_user():
     login = input('Login de l\'utilisateur à modifier : ')
@@ -42,8 +42,15 @@ def update_user():
                 user.set_role(input('Nouveau rôle : '))
                 curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.get_role(), login))
             elif choix == '6':
-                user.droit = input('Nouveau droit : ')
+                while True:
+                    user.droit = input('Nouveau droit : (md : medecin, cm = commerciaux, etc = autre) : ')
+                    if user.droit not in ['md', 'cm', 'etc']:
+                        print('Choix invalide')
+                    else:
+                        break
+
                 curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.droit, login))
+
             elif choix == '7':
                 user.generate_password(8)
                 curseur.execute('UPDATE users SET password = ? WHERE login = ?', (hashlib.sha256(user.get_password().encode()).hexdigest(), login))
@@ -74,7 +81,6 @@ def list_users():
     for user in data:
         print('-----------------------------------')
         print(f'Nom : {user[1]}\nPrenom : {user[2]}\nEmail : {user[3]}\nNuméro de téléphone : {user[4]}\nRôle : {user[5]}\nDroit : {user[6]}\nLogin : {user[7]}\n')
-
 
     return False
 connexion.close()
