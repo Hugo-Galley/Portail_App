@@ -7,8 +7,7 @@ loginadmin = curseur.execute('SELECT login FROM users WHERE role = "admin"').fet
 mdpadmin = curseur.execute('SELECT password FROM users WHERE role = "admin"').fetchall()
 loguser = curseur.execute('SELECT login FROM users WHERE role != "admin"').fetchall()
 mdpuser = curseur.execute('SELECT password FROM users WHERE role != "admin"').fetchall()
-print(loguser)
-print(mdpuser)
+
 
 print('Bienvenue sur notre logiciel de gestion')
 
@@ -28,11 +27,12 @@ while True:
                 liste_user.append(logine)
                 liste_mdp.append(mdp)
 
-            print(logine, mdp)
+
             login = input('Login : ')
             password = input("Mot de passe : ")
 
             if login == loginadmin[0][0] and hashlib.sha256(password.encode()).hexdigest() == mdpadmin[0][0]:
+                while True:
                     print('Bienvenue', loginadmin[0][0])
                     print('1. Ajouter un utilisateur')
                     print('2. Modifier un utilisateur')
@@ -52,14 +52,44 @@ while True:
                             list_users()
                         case 'Q' | 'q':
                             print('Au revoir')
+                            break
                             log = False
                         case _:
                             print('Choix invalide')
                     log = True
 
             elif login in logine and hashlib.sha256(password.encode()).hexdigest() in mdp:
-                    print('Bienvenue', login)
-                    log = True
+                print('Bienvenue', login)
+                data = curseur.execute('SELECT * FROM users WHERE login = ?', (login,)).fetchall()
+                for user_data in data:
+                    nom = user_data[0]
+                    prenom = user_data[1]
+                    email = user_data[2]
+                    num_tel = user_data[3]
+                    role = user_data[4]
+                    droit = user_data[5]
+                user = User(nom, prenom, email, num_tel, role, droit)
+                if user.get_role() == 'md':
+                    print('Doc medecin 1')
+                    print('Doc medecin 2')
+                    print('Doc medecin 3')
+                    input('Appuyez sur une touche pour continuer')
+                elif user.get_role() == 'cm':
+                    print('Commerciaux 1')
+                    print('Commerciaux 2')
+                    print('Commerciaux 3')
+                    input('Appuyez sur une touche pour continuer')
+                elif user.get_role() == 'etc':
+                    print('Autre 1')
+                    print('Autre 2')
+                    print('Autre 3')
+                    input('Appuyez sur une touche pour continuer')
+                else:
+                    print('Role inconnu')
+                    input('Appuyez sur une touche pour continuer')
+
+
+
             else:
                 print(f'Erreur de login ou de mot de passe. Il vous reste {3 - compteur} tentatives')
 
