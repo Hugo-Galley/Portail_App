@@ -1,6 +1,7 @@
 import random
 import string
 import datetime
+import secrets
 class User:
 
     def __init__(self,nom,prenom,email,num_tel,role,droit):
@@ -9,7 +10,7 @@ class User:
         self.__email = email
         self.__num_tel = num_tel
         self.__password = ''
-        self.__login = self.__prenom[0] + self.__nom #methode
+        self.__login = ''
         self.__admin = False
         self.__role = role
         self.droit = droit
@@ -18,8 +19,12 @@ class User:
     def generate_password(self,size):
         caracter = string.ascii_letters + string.digits + string.punctuation
         for i in range(size):
-            self.__password += random.choice(caracter)
+            self.__password += secrets.choice(caracter)
         return self.__password
+
+    def genrate_login(self):
+        self.__login = self.__prenom[0] + self.__nom
+        return self.__login
     def get_login(self):
         return self.__login
     def get_password(self):
