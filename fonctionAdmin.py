@@ -39,15 +39,21 @@ def delete_user():
     login = input('Login de l\'utilisateur à supprimer : ')
     for user in liste_user:
         if user.get_login() == login:
-            liste_user.remove(user)
-            print('Utilisateur supprimé avec succès')
-            return
+            confirm = input('Voulez-vous vraiment supprimer cet utilisateur ? (Y/n) : ')
+            if confirm == 'Y':
+                liste_user.remove(user)
+                print('Utilisateur supprimé avec succès')
+                return
+            else:
+                print('Suppression annulée')
+                return
     print('Utilisateur non trouvé')
 
 def list_users():
     for user in liste_user:
         if user in liste_user:
-            print(user.get_nom())
+            print(user.get_nom(),user.get_prenom(),user.get_email(),user.get_num_tel(),user.get_role(),user.droit,user.get_login(),user.get_password())
+
         else :
             print('Il n y\'a aucun utilisateurs pour le moment')
             return False
