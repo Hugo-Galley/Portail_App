@@ -77,5 +77,4 @@ def list_users():
 
 
     return False
-list_users()
 connexion.close()

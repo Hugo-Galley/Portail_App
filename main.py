@@ -1,9 +1,12 @@
+import hashlib
+import sqlite3
 from User import *
 import getpass
 from fonctionAdmin import *
-
-loginadmin = 'admin'
-mdpadmin = 'admin'
+connexion = sqlite3.connect('bdd.db')
+curseur = connexion.cursor()
+loginadmin = curseur.execute('SELECT login FROM users WHERE role = "admin"').fetchall()
+mdpadmin = curseur.execute('SELECT password FROM users WHERE role = "admin"').fetchall()
 
 print('Bienvenue sur notre logiciel de gestion')
 
@@ -18,8 +21,8 @@ while True:
         login = input('Login : ')
         password = input("Mot de passe : ")
 
-        if login == loginadmin and password == mdpadmin:
-            print('Bienvenue', loginadmin)
+        if login == loginadmin[0][0] and hashlib.sha256(password.encode()).hexdigest() == mdpadmin[0][0]:
+            print('Bienvenue', loginadmin[0][0])
             log = True
         else:
             print(f'Erreur de login ou de mot de passe. Il vous reste {3 - compteur} tentatives')
@@ -31,7 +34,7 @@ while True:
     print('2. Modifier un utilisateur')
     print('3. Supprimer un utilisateur')
     print('4. Lister les utilisateurs')
-    print('0. Quitter')
+    print('Q. Quitter')
     choix = input('Votre choix : ')
 
     if choix == '1':
@@ -42,7 +45,7 @@ while True:
         delete_user()
     elif choix == '4':
         list_users()
-    elif choix == '0':
+    elif choix == 'Q' or choix == 'q':
         print('Au revoir')
         log = False
     else:
