@@ -12,8 +12,8 @@ class User:
         self.__prenom = prenom
         self.__email = email
         self.__num_tel = num_tel
-        self.__password = ''
-        self.__login = ''
+        self.__password = login
+        self.__login = password
         self.__admin = False
         self.__role = role
         self.droit = droit

@@ -44,7 +44,7 @@ def connexion_user(login,motdepase):
     entre_mdp = ctk.CTkEntry(frame_authentication, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Mot de passe')
     entre_mdp.pack(pady=10)
 
-    btn_connexion = ctk.CTkButton(frame_authentication, text="Connexion", fg_color="transparent", font=("Arial", 20), command=verif)
+    btn_connexion = ctk.CTkButton(frame_authentication, text="Connexion", fg_color="grey", font=("Arial", 20), command=verif,width=300)
     btn_connexion.pack(pady=10)
 
     frame_authentication.pack(pady=50)
@@ -76,7 +76,7 @@ def mainframe():
 
     # Creation des labels
     label_nom = ctk.CTkLabel(windows, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
-    label_nom.pack()
+    label_nom.pack(pady=40)
 
     btn_ajout_user = ctk.CTkButton(frame_btn_choix, text="Ajouter un utilisateur", fg_color="transparent", font=("Arial", 20),command=ajouter).grid(row=0, column=0, padx=10, pady=10)
     btn_modif_user = ctk.CTkButton(frame_btn_choix, text="Modifier un utilisateur", fg_color="transparent", font=("Arial", 20),command=modifier).grid(row=0, column=1, padx=10, pady=10)
@@ -84,10 +84,9 @@ def mainframe():
     btn_list_user = ctk.CTkButton(frame_btn_choix, text="Lister les utilisateurs", fg_color="transparent", font=("Arial", 20),command=lister).grid(row=1, column=1, padx=10, pady=10)
     btn_quit = ctk.CTkButton(frame_btn_choix, text="Quitter", fg_color="transparent", font=("Arial", 20), command=retour).grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
-    frame_btn_choix.pack(pady=50)
+    frame_btn_choix.pack(pady=30)
 
     windows.mainloop()
-
 def ajout_user():
     def ajouter_user():
         try:
@@ -134,7 +133,7 @@ def ajout_user():
     entere_role = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Role')
     entere_role.pack(pady=10)
 
-    btn_connexion = ctk.CTkButton(frame_ajout_user, text="Ajouter", fg_color="transparent", font=("Arial", 20),command=ajouter_user).pack(pady=10)
+    ctk.CTkButton(frame_ajout_user, text="Ajouter", fg_color="grey", font=("Arial", 20),command=ajouter_user,width=300).pack(pady=10)
 
     frame_ajout_user.pack(pady=50)
 
@@ -184,8 +183,8 @@ def modif_user():
     frame_modif_user = ctk.CTkFrame(windows, fg_color="transparent")
 
     # Creation des labels
-    label_nom = ctk.CTkLabel(frame_modif_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
-    label_nom.pack()
+    label_nom = ctk.CTkLabel(windows, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
+    label_nom.pack(pady=40)
 
     enter_nom = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='login')
     enter_nom.pack(pady=10)
@@ -197,10 +196,10 @@ def modif_user():
     enter_modif = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Nouvelle Valeur')
     enter_modif.pack(pady=10)
 
-    btn_connexion = ctk.CTkButton(frame_modif_user, text="Modifier", fg_color="transparent", font=("Arial", 20), command=modifier_user)
+    btn_connexion = ctk.CTkButton(frame_modif_user, text="Modifier", fg_color="grey", font=("Arial", 20), command=modifier_user,width=300)
     btn_connexion.pack(pady=10)
 
-    frame_modif_user.pack(pady=50)
+    frame_modif_user.pack(pady=40)
     windows.mainloop()
     mainframe()
 def suppr_user():
@@ -226,19 +225,18 @@ def suppr_user():
     frame_suppr_user = ctk.CTkFrame(windows, fg_color="transparent")
 
     # Création des labels
-    label_nom = ctk.CTkLabel(frame_suppr_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
-    label_nom.pack()
+    label_nom = ctk.CTkLabel(windows, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
+    label_nom.pack(pady = 40)
 
     enter_nom = ctk.CTkEntry(frame_suppr_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='login')
     enter_nom.pack(pady=10)
 
-    btn_supprimer = ctk.CTkButton(frame_suppr_user, text="Supprimer", fg_color="transparent", font=("Arial", 20), command=supprimer_user)
+    btn_supprimer = ctk.CTkButton(frame_suppr_user, text="Supprimer", fg_color="grey", font=("Arial", 20), command=supprimer_user,width=300)
     btn_supprimer.pack(pady=10)
 
     frame_suppr_user.pack(pady=50)
     windows.mainloop()
     mainframe()
-
 def list_user():
 
     data = curseur.execute('SELECT * FROM users').fetchall()
