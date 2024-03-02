@@ -1,26 +1,38 @@
+import hashlib
+from User import *
+
 import customtkinter as ctk
 import CTkMessagebox as ctkmsg
 from tkinter import messagebox
+import sqlite3
+connexion = sqlite3.connect('bdd.db')
+curseur = connexion.cursor()
 
-def connexion():
+
+def connexion_user(login,motdepase):
     def verif():
         try:
-            if entre_login.get() == "admin" and entre_mdp.get() == "admin":
-                 ctkmsg.CTkMessagebox(message="Connexion Reussi", icon="check", option_1="Thanks")
+
+            hashed_password = hashlib.sha256(entre_mdp.get().encode()).hexdigest()
+            if entre_login.get() == login[0][0] and hashed_password == motdepase[0][0]:
+                ctkmsg.CTkMessagebox(message="Connexion Réussie", icon="check", option_1="Merci")
+                mainframe()
+            else:
+                ctkmsg.CTkMessagebox(message="Connexion Échouée", icon="cancel", option_1="Annuler")
 
         except Exception as e:
             print("Erreur de connexion:", e)
 
 
-    windows = ctk.CTk()
-    windows.title("SNT LABO")
-    windows.geometry("600x400")
+    windows_connexion = ctk.CTk()
+    windows_connexion.title("SNT LABO")
+    windows_connexion.geometry("600x400")
 
     # Creation de la frame
-    frame_authentication = ctk.CTkFrame(windows, fg_color="transparent")
+    frame_authentication = ctk.CTkFrame(windows_connexion, fg_color="transparent")
 
     # Creation des labels
-    label_nom = ctk.CTkLabel(windows, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
+    label_nom = ctk.CTkLabel(windows_connexion, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
     label_nom.pack()
 
     label_nom = ctk.CTkLabel(frame_authentication, text="Veuillez entrer vos identifiants de connexion", fg_color="transparent", font=("Arial", 20))
@@ -37,13 +49,12 @@ def connexion():
 
     frame_authentication.pack(pady=50)
 
-    windows.mainloop()
-    mainframe()
+    windows_connexion.mainloop()
 def mainframe():
 
     def retour():
         windows.destroy()
-        connexion()
+        connexion_user()
     def ajouter():
         windows.destroy()
         ajout_user()
@@ -56,7 +67,6 @@ def mainframe():
     def lister():
         windows.destroy()
         list_user()
-
     windows = ctk.CTk()
     windows.title("SNT LABO")
     windows.geometry("600x400")
@@ -81,15 +91,14 @@ def mainframe():
 def ajout_user():
     def ajouter_user():
         try:
-            if enter_nom.get() == "admin":
-                ctkmsg.CTkMessagebox(message="Connexion Reussi", icon="check",option_1="Thanks")
-                windows.destroy()
-                mainframe()
-            else:
-                ctkmsg.CTkMessagebox(message="Connexion échoué", icon="cancel", option_1="Cancel")
-                windows.destroy()
-                mainframe()
-        except Exception as e:
+            user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(), enter_droit.get(), entere_role.get())
+            user.genrate_login()
+            user.generate_password(8)
+            curseur.execute('INSERT INTO users (nom, prenom, email, num_tel, role, droit,login, password) VALUES (?,?,?,?,?,?,?,?)', (user.get_nom(), user.get_prenom(), user.get_email(), user.get_num_tel(), user.get_role(), user.get_droit(), user.get_login(), hashlib.sha256(user.get_password().encode()).hexdigest()))
+            connexion.commit()
+            ctkmsg.CTkMessagebox(message="Ajout Reussi", icon="check",option_1="Thanks")
+
+        except sqlite3.Error as e:
             messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
             windows.destroy()
             mainframe()
@@ -130,14 +139,38 @@ def ajout_user():
     frame_ajout_user.pack(pady=50)
 
     windows.mainloop()
+    mainframe()
 def modif_user():
     def modifier_user():
         try:
-            if enter_nom.get() == "admin":
-                ctkmsg.CTkMessagebox(message="Connexion Reussi", icon="check",option_1="Thanks")
-
-            else:
-                ctkmsg.CTkMessagebox(message="Connexion échoué", icon="cancel", option_1="Cancel")
+            data = curseur.execute('SELECT * FROM users WHERE login = ?', (enter_nom.get(),)).fetchall()
+            user_trouve = False
+            for user_data in data:
+                if user_data[7] == enter_nom.get():
+                    user = User(user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6])
+                    if option_menu.get() == "Nom":
+                        user.set_nom(enter_modif.get())
+                        curseur.execute('UPDATE users SET nom = ? WHERE login = ?', (user.get_nom(), enter_nom.get()))
+                    if option_menu.get() == "Prenom":
+                        user.set_prenom(enter_modif.get())
+                        curseur.execute('UPDATE users SET prenom = ? WHERE login = ?', (user.get_prenom(), enter_nom.get()))
+                    if option_menu.get() == "Email":
+                        user.set_email(enter_modif.get())
+                        curseur.execute('UPDATE users SET email = ? WHERE login = ?', (user.get_email(), enter_nom.get()))
+                    if option_menu.get() == "Numero de telephone":
+                        user.set_num_tel(enter_modif.get())
+                        curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.get_num_tel(), enter_nom.get()))
+                    if option_menu.get() == "Droit":
+                        if enter_modif.get() not in ['md', 'cm', 'etc']:
+                            ctkmsg.CTkMessagebox(message="Modification échoué", icon="cancel", option_1="Cancel")
+                        else:
+                            user.set_droit(enter_modif.get())
+                            curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.get_droit(), enter_nom.get()))
+                    if option_menu.get() == "Role":
+                        user.set_role(enter_modif.get())
+                        curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.get_role(), enter_nom.get()))
+                    connexion.commit()
+            ctkmsg.CTkMessagebox(message="Modification échoué", icon="cancel", option_1="Cancel")
 
         except Exception as e:
             messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
@@ -173,11 +206,12 @@ def modif_user():
 def suppr_user():
     def supprimer_user():
         try:
-            if enter_nom.get() == "admin":
+                curseur.execute('DELETE FROM users WHERE login = ?', (enter_nom.get(),))
+                connexion.commit()
+
                 ctkmsg.CTkMessagebox(message="Suppression Réussie", icon="check", option_1="Thanks")
-            else:
-                ctkmsg.CTkMessagebox(message="Suppression échouée", icon="cancel", option_1="Cancel")
-        except Exception as e:
+
+        except sqlite3.Error as e:
             messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
 
         # Appel de mainframe() avant de détruire la fenêtre
@@ -206,9 +240,11 @@ def suppr_user():
     mainframe()
 
 def list_user():
+
+    data = curseur.execute('SELECT * FROM users').fetchall()
     windows = ctk.CTk()
     windows.title("SNT LABO")
-    windows.geometry("600x550")
+    windows.geometry("1500x550")
 
     # Creation de la frame
     frame_list_user = ctk.CTkFrame(windows, fg_color="transparent")
@@ -216,12 +252,14 @@ def list_user():
     # Creation des labels
     label_nom = ctk.CTkLabel(frame_list_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
     label_nom.pack()
+    for user in data:
+        label_nom = ctk.CTkLabel(frame_list_user, text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit : {user[6]} Login : {user[7]}', fg_color="transparent", font=("Arial", 20))
+        ctk.CTkLabel(frame_list_user, text="---------------------------------------------", fg_color="transparent", font=("Arial", 20)).pack()
+        label_nom.pack(padx=10, pady=10)
 
-    label_nom = ctk.CTkLabel(frame_list_user, text="Liste des utilisateurs", fg_color="transparent", font=("Arial", 20))
-    label_nom.pack(padx=10, pady=10)
+
 
 
     frame_list_user.pack(pady=50)
     windows.mainloop()
-
-mainframe()
+    mainframe()

@@ -14,7 +14,7 @@ def add_user():
     user = User(input('Nom : '),input('Prenom : '),input('Email : '),input('Numéro de téléphone : '),input('Droit (md : medecin, cm = commerciaux, etc = autre) :'),input('Droit (r : Ecrire, w : lire ) :'))
     # Générer un login et un mot de passe pour l'utilisateur
     user.genrate_login()
-    user.generate_password(input('Nombre de caractères pour le mot de passe : '))
+    user.generate_password(int(input('Nombre de caractères pour le mot de passe : ')))
     # Ajouter l'utilisateur à la base de données
     curseur.execute('INSERT INTO users (nom, prenom, email, num_tel, role, droit,login, password) VALUES (?,?,?,?,?,?,?,?)', (user.get_nom(), user.get_prenom(), user.get_email(), user.get_num_tel(), user.get_role(), user.get_droit(), user.get_login(), hashlib.sha256(user.get_password().encode()).hexdigest()))
     connexion.commit()
@@ -63,7 +63,7 @@ def update_user():
                 curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.droit, login))
 
             elif choix == '7':
-                user.generate_password(input('Nombre de caractères pour le mot de passe :'))
+                user.generate_password(int(input('Nombre de caractères pour le mot de passe :')))
                 curseur.execute('UPDATE users SET password = ? WHERE login = ?', (hashlib.sha256(user.get_password().encode()).hexdigest(), login))
             elif choix == '8':
                 user.genrate_login()
