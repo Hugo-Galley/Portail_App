@@ -4,6 +4,7 @@
 import string
 import datetime
 import secrets
+from tkinter import messagebox
 # Définition de la classe User
 class User:
     # Constructeur de la classe User
@@ -61,7 +62,7 @@ class User:
         self.__num_tel = num_tel
     def set_nom(self,nom):
         if nom == '':
-            print('Le nom ne doit pas être vide')
+            messagebox.showerror('Erreur','Le nom ne peut pas être vide')
         else:
             self.__nom = nom
     def set_prenom(self,prenom):
@@ -73,52 +74,65 @@ class User:
         self.droit = droit
 
 # Définition de la classe Scientifique
+# Définition de la classe Scientifique
 class Scientifique(User):
 
     # Constructeur de la classe Scientifique
-    def __init__(self,nom,prenom,email,num_tel,numero,code_projet,date_prise_fonction):
-        super.__init__(nom,prenom,email,num_tel)
+    def __init__(self, nom, prenom, email, num_tel, role, droit, numero, code_projet, date_prise_fonction, login='', password=''):
+        super().__init__(nom, prenom, email, num_tel, role, droit, login, password)
         self.__numero = numero
         self.__code_projet = code_projet
         self.__date_prise_fonction = date_prise_fonction
         self.__responsable = False
         self.__unite = []
-        self.__date_prise_fonction_responsbale = ''
-        # Méthode pour vérifier si le scientifique est responsable  en fonction de la date de prise de fonction
-        def savoir_responsable(self):
-            if 2024 - self.__date_prise_fonction > 10:
-                self.__responsable = True
+        self.__date_prise_fonction_responsable = ''
 
-        # Méthode pour récupérer les attributs privés de la classe Scientifique
-        def get_numero(self):
-            return self.__numero
-        def get_code_projet(self):
-            return self.__code_projet
-        def get_date_prise_fonction(self):
-            return self.__date_prise_fonction
-        def get_responsable(self):
-            return self.__responsable
-        def get_unite(self):
-            return self.__unite
-        def get_date_prise_fonction_responsbale(self):
-            return self.__date_prise_fonction_responsbale
+    def verifier_responsable(self):
+        # Ajoutez ici votre logique pour vérifier si le scientifique est responsable
+        # Vous pouvez comparer la date de prise de fonction avec une date de référence
+        pass
 
-        # Méthode pour modifier les attributs privés de la classe Scientifique
+    def savoir_responsable(self):
+        if datetime.datetime.now().year - int(self.__date_prise_fonction) > 10:
+            self.__responsable = True
+            return True
 
-        def set_numero(self,numero):
-            self.__numero = numero
-        def set_code_projet(self,code_projet):
-            self.__code_projet = code_projet
-        def set_date_prise_fonction(self,date_prise_fonction):
-            self.__date_prise_fonction = date_prise_fonction
-        def set_responsable(self,responsable): #veririfer si le scientifique est responsable
-            if datetime.datetime.now().year - self.__date_prise_fonction:
-                self.__responsable = True
-            self.__responsable = responsable
-        def set_unite(self,unite):
-            self.__unite.append(unite)
+    # Méthode pour récupérer les attributs privés de la classe Scientifique
+    def get_numero(self):
+        return self.__numero
 
+    def get_code_projet(self):
+        return self.__code_projet
 
+    def get_date_prise_fonction(self):
+        return self.__date_prise_fonction
+
+    def get_responsable(self):
+        return self.__responsable
+
+    def get_unite(self):
+        return self.__unite
+
+    def get_date_prise_fonction_responsbale(self):
+        return self.__date_prise_fonction_responsbale
+
+    # Méthode pour modifier les attributs privés de la classe Scientifique
+    def set_numero(self, numero):
+        self.__numero = numero
+
+    def set_code_projet(self, code_projet):
+        self.__code_projet = code_projet
+
+    def set_date_prise_fonction(self, date_prise_fonction):
+        self.__date_prise_fonction = date_prise_fonction
+
+    def set_responsable(self, responsable):  # veririfer si le scientifique est responsable
+        if datetime.datetime.now().year - self.__date_prise_fonction:
+            self.__responsable = True
+        self.__responsable = responsable
+
+    def set_unite(self, unite):
+        self.__unite.append(unite)
 
 
 
