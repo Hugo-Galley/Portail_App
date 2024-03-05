@@ -30,28 +30,47 @@ class User:
         self.__login = self.__prenom[0] + self.__nom
         return self.__login
     # Méthode pour récupérer les attributs privés de la classe User
-    def get_login(self):
+    @property
+    def login(self):
         return self.__login
-    def get_password(self):
+
+    @property
+    def password(self):
         return self.__password
-    def get_email(self):
+
+    @property
+    def email(self):
         return self.__email
-    def get_num_tel(self):
+
+    @property
+    def num_tel(self):
         return self.__num_tel
-    def get_nom(self):
+
+    @property
+    def nom(self):
         return self.__nom
-    def get_prenom(self):
+
+    @property
+    def prenom(self):
         return self.__prenom
-    def get_admin(self):
+
+    @property
+    def admin(self):
         return self.__admin
-    def get_role(self):
+
+    @property
+    def role(self):
         return self.__role
-    def get_droit(self):
+
+    @property
+    def droit(self):
         return self.droit
 
     # Méthode pour modifier les attributs privés de la classe User
+
     def set_admin(self,admin):
         self.__admin = admin
+
     def set_login(self,login):
         self.__login = login
     def set_password(self,password):
@@ -98,25 +117,32 @@ class Scientifique(User):
             return True
 
     # Méthode pour récupérer les attributs privés de la classe Scientifique
-    def get_numero(self):
+    @property
+    def numero(self):
         return self.__numero
 
-    def get_code_projet(self):
+    @property
+    def code_projet(self):
         return self.__code_projet
 
-    def get_date_prise_fonction(self):
+    @property
+    def date_prise_fonction(self):
         return self.__date_prise_fonction
 
-    def get_responsable(self):
+    @property
+    def responsable(self):
         return self.__responsable
 
-    def get_unite(self):
+    @property
+    def unite(self):
         return self.__unite
 
-    def get_date_prise_fonction_responsbale(self):
+    @property
+    def date_prise_fonction_responsbale(self):
         return self.__date_prise_fonction_responsbale
 
     # Méthode pour modifier les attributs privés de la classe Scientifique
+
     def set_numero(self, numero):
         self.__numero = numero
 

@@ -1,7 +1,10 @@
 import hashlib
+from pickle import FALSE
+
 from User import *
 import customtkinter as ctk
 from tkinter import messagebox, YES
+import tkinter as tk
 import sqlite3
 
 
@@ -16,7 +19,8 @@ mdpscientifique = curseur.execute('SELECT password FROM scientifique').fetchall(
 
 windows = ctk.CTk()
 windows.title("SNT LABO")
-windows.geometry("500x400")
+windows.geometry("500x400")# Créer le widget Text
+
 frame_authentication = ctk.CTkFrame(windows, fg_color="transparent")
 frame_btn_choix = ctk.CTkFrame(windows, fg_color="transparent")
 frame_ajout_user = ctk.CTkFrame(windows, fg_color="transparent")
@@ -141,10 +145,10 @@ def ajout_user():
                     return
                 user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
                                     entere_role.get(), enter_droit.get(), entere_numero.get(), enter_code_projet.get(),
-                                    enter_date_prise_fonction.get())
+                                    choix_anne)
                 user.genrate_login()
                 user.generate_password(8)
-                curseur.execute('INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?)',(user.get_nom(), user.get_prenom(), user.get_email(), user.get_num_tel(), user.get_role(), user.get_droit(), user.get_numero(), user.get_code_projet(), user.get_date_prise_fonction(), user.get_login(), hashlib.sha256(user.get_password().encode()).hexdigest()))
+                curseur.execute('INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?)',(user.nom(), user.prenom(), user.email(), user.num_tel(), user.role(), user.droit(), user.numero(), user.code_projet(), user.date_prise_fonction(), user.login(), hashlib.sha256(user.password().encode()).hexdigest()))
             else:
                 user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
                             entere_role.get(), enter_droit.get())
@@ -152,8 +156,8 @@ def ajout_user():
                 user.generate_password(8)
                 curseur.execute(
                     'INSERT INTO users (nom, prenom, email, num_tel, role, droit, login, password) VALUES (?,?,?,?,?,?,?,?)',
-                    (user.get_nom(), user.get_prenom(), user.get_email(), user.get_num_tel(), user.get_role(),
-                     user.get_droit(), user.get_login(), hashlib.sha256(user.get_password().encode()).hexdigest()))
+                    (user.nom(), user.prenom(), user.email(), user.num_tel(), user.role(),
+                     user.droit(), user.login(), hashlib.sha256(user.password().encode()).hexdigest()))
 
 
 
@@ -175,7 +179,7 @@ def ajout_user():
             frame_ajouter.pack_forget()
             frame_btn_choix.pack()
             messagebox.showinfo("Succès",
-                                f"Utilisateur ajouté avec succès\nLogin : {user.get_login()}\nMot de passe : {user.get_password()}")
+                                f"Utilisateur ajouté avec succès\nLogin : {user.login()}\nMot de passe : {user.password()}")
 
         except sqlite3.Error as e:
             # En cas d'erreur, afficher un message d'erreur et effacer les frames
@@ -187,16 +191,23 @@ def ajout_user():
     def affichage_scientifique():
         if switch_var.get() == True:
             entere_numero.pack(pady=10)
+            label_prise_fonction.pack(pady=10)
             enter_date_prise_fonction.pack(pady=10)
             enter_code_projet.pack(pady=10)
+
         else:
             entere_numero.pack_forget()
             enter_date_prise_fonction.pack_forget()
             enter_code_projet.pack_forget()
+            label_prise_fonction.pack_forget()
+    choix_anne = 2024
+    def combobox_calllback(choice):
+        choix_anne = choice
 
 
 
     switch_var = ctk.BooleanVar(value=False)
+    switch_var_medecin = ctk.BooleanVar(value=False)
 
     # Creation de la frame
 
@@ -226,13 +237,15 @@ def ajout_user():
     entere_role = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Role')
     entere_role.pack(pady=10)
 
-    switch_scientifique = ctk.CTkSwitch(frame_ajout_user, text="Scientifique",variable=switch_var,onvalue=True,offvalue=False,command=affichage_scientifique).pack(pady=10)
+    ctk.CTkSwitch(frame_ajout_user, text="Scientifique", variable=switch_var, onvalue=True,
+                                        offvalue=False, command=affichage_scientifique).pack()
+
 
     entere_numero = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                  placeholder_text='Numero de labo')
+    label_prise_fonction = ctk.CTkLabel(frame_ajout_user, text="Date de prise de fonction", fg_color="transparent", font=("Arial", 20))
+    enter_date_prise_fonction = ctk.CTkComboBox(frame_ajout_user, values=['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997'],command=combobox_calllback)
 
-    enter_date_prise_fonction = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
-                                             placeholder_text='Date de prise de fonction')
     enter_code_projet = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                      placeholder_text='Code du projet')
 
@@ -249,32 +262,33 @@ def modif_user():
     def modifier_user():
         try:
             data = curseur.execute('SELECT * FROM users WHERE login = ?', (enter_nom.get(),)).fetchall()
+            data2 = curseur.execute('SELECT * FROM scientifique WHERE login = ?', (enter_nom.get(),)).fetchall()
             user_trouve = False
-            for user_data in data:
+            for user_data in data or data2:
                 if user_data[7] == enter_nom.get():
                     user = User(user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6])
                     user_trouve = True
                     if option_menu.get() == "Nom":
                         user.set_nom(enter_modif.get())
-                        curseur.execute('UPDATE users SET nom = ? WHERE login = ?', (user.get_nom(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET nom = ? WHERE login = ?', (user.nom(), enter_nom.get()))
                     if option_menu.get() == "Prenom":
                         user.set_prenom(enter_modif.get())
-                        curseur.execute('UPDATE users SET prenom = ? WHERE login = ?', (user.get_prenom(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET prenom = ? WHERE login = ?', (user.prenom(), enter_nom.get()))
                     if option_menu.get() == "Email":
                         user.set_email(enter_modif.get())
-                        curseur.execute('UPDATE users SET email = ? WHERE login = ?', (user.get_email(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET email = ? WHERE login = ?', (user.email(), enter_nom.get()))
                     if option_menu.get() == "Numero de telephone":
                         user.set_num_tel(enter_modif.get())
-                        curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.get_num_tel(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.num_tel(), enter_nom.get()))
                     if option_menu.get() == "Droit":
                         if enter_modif.get() not in ['md', 'cm', 'etc','sc']:
                             messagebox.showerror("Erreur", "Droit incorrect")
                         else:
                             user.set_droit(enter_modif.get())
-                            curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.get_droit(), enter_nom.get()))
+                            curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.droit(), enter_nom.get()))
                     if option_menu.get() == "Role":
                         user.set_role(enter_modif.get())
-                        curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.get_role(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.role(), enter_nom.get()))
                     connexion.commit()
 
             if not user_trouve:
@@ -393,7 +407,7 @@ def document_scientifique(log):
     for info in data:
         user = Scientifique(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10])
     if user.savoir_responsable():
-        label_responsable = ctk.CTkLabel(frame_science, text="Vous êtes responsable", fg_color="transparent", font=("Arial", 20)).pack()
+        ctk.CTkLabel(frame_science, text="Vous êtes responsable", fg_color="transparent", font=("Arial", 20)).pack()
 
     # Creation des labels
     label_nom = ctk.CTkLabel(frame_science, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
@@ -409,11 +423,11 @@ def affichage_document(log):
     data = curseur.execute('SELECT * FROM users WHERE login = ?', (log,)).fetchall()
     for info in data :
         user = User(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8])
-    if user.get_droit() == 'md':
+    if user.droit() == 'md':
         affichage_doc_medecin()
-    elif user.get_droit() == 'cm':
+    elif user.droit() == 'cm':
         affichage_doc_commericale()
-    elif user.get_droit() == 'etc':
+    elif user.droit() == 'etc':
         affichage_doc_collaborateur()
     else:
         messagebox.showerror('Erreur', 'Erreur de role')
@@ -456,5 +470,4 @@ def affichage_doc_collaborateur():
     doc3 = ctk.CTkLabel(frame_doc_collaborateur, text='Document 3', font=('Arial', 20)).pack(pady=10)
 
     frame_doc_collaborateur.pack(expand=YES)
-
 
