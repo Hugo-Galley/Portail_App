@@ -29,7 +29,7 @@ class User:
     def genrate_login(self):
         self.__login = self.__prenom[0] + self.__nom
         return self.__login
-    # Méthode pour récupérer les attributs privés de la classe User
+    # Méthode pour récupérer les attributs privés de la classe User avec utilisation de @property pour les rendre accessibles
     @property
     def login(self):
         return self.__login
@@ -80,10 +80,7 @@ class User:
     def set_num_tel(self,num_tel):
         self.__num_tel = num_tel
     def set_nom(self,nom):
-        if nom == '':
-            messagebox.showerror('Erreur','Le nom ne peut pas être vide')
-        else:
-            self.__nom = nom
+        self.__nom = nom
     def set_prenom(self,prenom):
         self.__prenom = prenom
 
@@ -92,8 +89,7 @@ class User:
     def set_droit(self,droit):
         self.__droit = droit
 
-# Définition de la classe Scientifique
-# Définition de la classe Scientifique
+# Définition de la classe Scientifique qui hérite de la classe User
 class Scientifique(User):
 
     # Constructeur de la classe Scientifique
@@ -116,7 +112,7 @@ class Scientifique(User):
             self.__responsable = True
             return True
 
-    # Méthode pour récupérer les attributs privés de la classe Scientifique
+    # Méthode pour récupérer les attributs privés de la classe Scientifique avec utilisation de @property pour les rendre accessibles
     @property
     def numero(self):
         return self.__numero
@@ -152,7 +148,9 @@ class Scientifique(User):
     def set_date_prise_fonction(self, date_prise_fonction):
         self.__date_prise_fonction = date_prise_fonction
 
-    def set_responsable(self, responsable):  # veririfer si le scientifique est responsable
+    # veririfer si le scientifique est responsable
+    def set_responsable(self, responsable):
+        # si la date de prise de fonction est supérieur à 10 ans alors le scientifique est responsable
         if datetime.datetime.now().year - self.__date_prise_fonction:
             self.__responsable = True
         self.__responsable = responsable
