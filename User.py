@@ -90,7 +90,7 @@ class User:
     def set_role(self,role):
         self.__role = role
     def set_droit(self,droit):
-        self.droit = droit
+        self.__droit = droit
 
 # Définition de la classe Scientifique
 # Définition de la classe Scientifique

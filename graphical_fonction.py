@@ -20,6 +20,8 @@ mdpscientifique = curseur.execute('SELECT password FROM scientifique').fetchall(
 windows = ctk.CTk()
 windows.title("SNT LABO")
 windows.geometry("500x400")# Créer le widget Text
+windows.grid_rowconfigure(0, weight=1)
+windows.grid_columnconfigure(0, weight=1)
 
 frame_authentication = ctk.CTkFrame(windows, fg_color="transparent")
 frame_btn_choix = ctk.CTkFrame(windows, fg_color="transparent")
@@ -375,29 +377,47 @@ def suppr_user():
     frame_suppr_user.pack(expand=YES)
 
 def list_user():
-
     def quitter():
         frame_list_user.pack_forget()
         frame_btn_choix.pack()
 
+    def on_scroll(*args):
+        canvas.yview(*args)
+        frame_list_user.yview(*args)
+
+
+
+    # Création d'une toile pour contenir le cadre avec une barre de défilement
+    canvas = tk.Canvas(windows)
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    # Création d'un cadre pour contenir les utilisateurs
+    frame_list_user = tk.Frame(canvas)
+    scrollbar = tk.Scrollbar(windows, orient="vertical", command=on_scroll)
+    scrollbar.pack(side="right", fill="y")
+    scrollbar.config(command=canvas.yview)
+    canvas.config(yscrollcommand=scrollbar.set)
+
+    # Ajout du cadre des utilisateurs dans la toile
+    canvas.create_window((0, 0), window=frame_list_user, anchor="nw")
+
+    # Affichage des utilisateurs dans le cadre
     data = curseur.execute('SELECT * FROM users').fetchall()
-
-
-
-    windows.geometry("1200x1000")
-    # Creation des labels
-    label_nom = ctk.CTkLabel(frame_list_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
-    label_nom.pack()
     for user in data:
-        label_nom = ctk.CTkLabel(frame_list_user, text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit : {user[6]} Login : {user[7]}', fg_color="transparent", font=("Arial", 20))
-        ctk.CTkLabel(frame_list_user, text="---------------------------------------------", fg_color="transparent", font=("Arial", 20)).pack()
+        label_nom = ctk.CTkLabel(frame_list_user,
+                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit : {user[6]} Login : {user[7]}',
+                                 fg_color="transparent", font=("Arial", 20))
+        ctk.CTkLabel(frame_list_user, text="---------------------------------------------", fg_color="transparent",
+                     font=("Arial", 12)).pack()
         label_nom.pack(padx=10, pady=10)
 
+    # Ajout d'un bouton "Retour"
     ctk.CTkButton(frame_list_user, text="Retour", fg_color="grey", font=("Arial", 20), command=quitter).pack(pady=10)
 
+    # Configuration de la toile pour le défilement
+    frame_list_user.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
-
-    frame_list_user.pack(pady=50)
+    # Affichage de la fenêtre
 
 def document_scientifique(log):
     def retour():
