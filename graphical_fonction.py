@@ -5,6 +5,7 @@ from User import *
 import customtkinter as ctk
 from tkinter import messagebox, YES
 import sqlite3
+
 # Connexion à la base de données
 connexion = sqlite3.connect('bdd.db')
 curseur = connexion.cursor()
@@ -45,6 +46,8 @@ fram_scroll.pack(fill='both', expand=True)
 
 # Fonction de connexion
 def connexion_user():
+    global entre_login
+    global entre_mdp
     # definition de la taille de la fenetre
     windows.geometry("500x400")
     def verif():
@@ -118,7 +121,10 @@ def mainframe():
     # creation des fonctions pour les boutons
     def retour():
         frame_btn_choix.pack_forget()
-        connexion_user()
+        frame_authentication.pack()
+        entre_login.delete(0, 'end')
+        entre_mdp.delete(0, 'end')
+
 
     def ajouter():
         frame_btn_choix.pack_forget()
@@ -179,25 +185,19 @@ def ajout_user():
                     messagebox.showerror("Erreur", "Veuillez remplir tous les champs")
                     return
                 # Creation de l'objet scientifique
-                user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
-                                    entere_role.get(), enter_droit.get(), entere_numero.get(), enter_code_projet.get(),
-                                    choix_anne)
+                user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),entere_role.get(), enter_droit.get(),enter_region.get(),enter_unite.get(), entere_numero.get(), enter_code_projet.get(), enter_date_prise_fonction.get())
                 # Génération du login et du mot de passe
                 user.genrate_login()
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
-                curseur.execute('INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?)',(user.nom(), user.prenom(), user.email(), user.num_tel(), user.role(), user.droit(), user.numero(), user.code_projet(), user.date_prise_fonction(), user.login(), hashlib.sha256(user.password().encode()).hexdigest()))
+                curseur.execute('INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',(user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.numero, user.code_projet, user.date_prise_fonction, user.login(), hashlib.sha256(user.password.encode()).hexdigest()))
             else:
                 # Creation de l'objet user
-                user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
-                            entere_role.get(), enter_droit.get())
+                user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(), entere_role.get(), enter_droit.get(), enter_region.get(), enter_unite.get())
                 user.genrate_login()
-                user.generate_password(8)
+                user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
-                curseur.execute(
-                    'INSERT INTO users (nom, prenom, email, num_tel, role, droit, login, password) VALUES (?,?,?,?,?,?,?,?)',
-                    (user.nom(), user.prenom(), user.email(), user.num_tel(), user.role(),
-                     user.droit(), user.login(), hashlib.sha256(user.password().encode()).hexdigest()))
+                curseur.execute('INSERT INTO users (nom, prenom, email, num_tel, role, droit,region, unite, login, password) VALUES (?,?,?,?,?,?,?,?,?,?)',(user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.region, user.unite, user.login, hashlib.sha256(user.password.encode()).hexdigest()))
 
 
 
@@ -218,7 +218,7 @@ def ajout_user():
             frame_ajouter.pack_forget()
             frame_btn_choix.pack()
             messagebox.showinfo("Succès",
-                                f"Utilisateur ajouté avec succès\nLogin : {user.login()}\nMot de passe : {user.password()}")
+                                f"Utilisateur ajouté avec succès\nLogin : {user.login}\nMot de passe : {user.password}")
 
         except sqlite3.Error as e:
             # En cas d'erreur, afficher un message d'erreur et effacer les frames
@@ -286,6 +286,12 @@ def ajout_user():
     enter_size = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Taille du mot de passe')
     enter_size.pack(pady=10)
 
+    enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Region')
+    enter_region.pack(pady=10)
+
+    enter_unite = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Unite')
+    enter_unite.pack(pady=10)
+
     # Creation du bouton pour activer ou désactiver les champs supplémentaires pour le scientifique
     ctk.CTkSwitch(frame_ajout_user, text="Scientifique", variable=switch_var, onvalue=True,
                                         offvalue=False, command=affichage_scientifique).pack()
@@ -319,33 +325,33 @@ def modif_user():
             # Verification de l'existence de l'utilisateur
             for user_data in data or data2:
                 # Si l'utilisateur est trouvé, création de l'objet user
-                if user_data[7] == enter_nom.get():
+                if user_data[9] == enter_nom.get():
 
-                    user = User(user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6])
+                    user = User(user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6], user_data[7], user_data[8])
                     user_trouve = True
                     # Modification des données de l'utilisateur
                     if option_menu.get() == "Nom":
                         user.set_nom(enter_modif.get())
-                        curseur.execute('UPDATE users SET nom = ? WHERE login = ?', (user.nom(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET nom = ? WHERE login = ?', (user.nom, enter_nom.get()))
                     if option_menu.get() == "Prenom":
                         user.set_prenom(enter_modif.get())
-                        curseur.execute('UPDATE users SET prenom = ? WHERE login = ?', (user.prenom(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET prenom = ? WHERE login = ?', (user.prenom, enter_nom.get()))
                     if option_menu.get() == "Email":
                         user.set_email(enter_modif.get())
-                        curseur.execute('UPDATE users SET email = ? WHERE login = ?', (user.email(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET email = ? WHERE login = ?', (user.email, enter_nom.get()))
                     if option_menu.get() == "Numero de telephone":
                         user.set_num_tel(enter_modif.get())
-                        curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.num_tel(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.num_tel, enter_nom.get()))
                     if option_menu.get() == "Droit":
                         # Verification du droit
                         if enter_modif.get() not in ['md', 'cm', 'etc','sc']:
                             messagebox.showerror("Erreur", "Droit incorrect")
                         else:
                             user.set_droit(enter_modif.get())
-                            curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.droit(), enter_nom.get()))
+                            curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.droit, enter_nom.get()))
                     if option_menu.get() == "Role":
                         user.set_role(enter_modif.get())
-                        curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.role(), enter_nom.get()))
+                        curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.role, enter_nom.get()))
                     connexion.commit()
             # Si l'utilisateur n'est pas trouvé, afficher un message d'erreur
             if not user_trouve:
@@ -448,9 +454,11 @@ def list_user():
     # Recuperation des données de la base de données
     data = curseur.execute('SELECT * FROM users').fetchall()
     # Affichage des utilisateurs dans le cadre
+    Logo = ctk.CTkLabel(frame_list_user, text="Liste des utilisateurs", fg_color="transparent", font=("Arial", 40))
+    Logo.pack(pady=40)
     for user in data:
         label_nom = ctk.CTkLabel(frame_list_user,
-                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit : {user[6]} Login : {user[7]}',
+                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit : {user[6]} Region : {user[7]} Unite : {user[8]} Login : {user[9]}',
                                  fg_color="transparent", font=("Arial", 20))
         ctk.CTkLabel(frame_list_user, text="---------------------------------------------", fg_color="transparent",
                      font=("Arial", 12)).pack()
@@ -468,7 +476,7 @@ def document_scientifique(log):
     data = curseur.execute('SELECT * FROM scientifique WHERE login = ?', (log,)).fetchall()
     for info in data:
         # Creation de l'objet scientifique
-        user = Scientifique(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10])
+        user = Scientifique(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10],info[11],info[12])
     # Verification si l'utilisateur est responsable
     if user.savoir_responsable():
         ctk.CTkLabel(frame_science, text="Vous êtes responsable", fg_color="transparent", font=("Arial", 20)).pack()
@@ -489,7 +497,7 @@ def affichage_document(log):
     data = curseur.execute('SELECT * FROM users WHERE login = ?', (log,)).fetchall()
     for info in data :
         # Creation de l'objet user
-        user = User(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8])
+        user = User(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10])
     # Verification du droit pour l'affichage des documents
     if user.droit() == 'md':
         affichage_doc_medecin()
