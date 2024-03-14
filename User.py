@@ -8,7 +8,7 @@ from tkinter import messagebox
 # Définition de la classe User
 class User:
     # Constructeur de la classe User
-    def __init__(self,nom,prenom,email,num_tel,role,droit,login = '',password = ''):
+    def __init__(self,nom,prenom,email,num_tel,role,droit,region,unite,login = '',password = ''):
         self.__nom = nom
         self.__prenom = prenom
         self.__email = email
@@ -17,15 +17,19 @@ class User:
         self.__login = password
         self.__admin = False
         self.__role = role
-        self.droit = droit
+        self.__droit = droit
+        self.__region = region
+        self.__unite = unite
 
     # Méthode pour générer un mot de passe en utilisant la librairie secrets et la librairie string
+
     def generate_password(self,size):
         caracter = string.ascii_letters + string.digits + string.punctuation
-        for i in range(size):
+        for i in range(int(size)):
             self.__password += secrets.choice(caracter)
         return self.__password
-    # Méthode pour générer un login en utilisant le nom et le prénom de l'utilisateur
+    # Méthode pour générer un login en utilisant le nom et le prénom de l'utilisateur*
+
     def genrate_login(self):
         self.__login = self.__prenom[0] + self.__nom
         return self.__login
@@ -64,7 +68,13 @@ class User:
 
     @property
     def droit(self):
-        return self.droit
+        return self.__droit
+    @property
+    def region(self):
+        return self.__region
+    @property
+    def unite(self):
+        return self.__unite
 
     # Méthode pour modifier les attributs privés de la classe User
 
@@ -88,13 +98,17 @@ class User:
         self.__role = role
     def set_droit(self,droit):
         self.__droit = droit
+    def set_region(self,region):
+        self.__region = region
+    def set_unite(self,unite):
+        self.__unite = unite
 
 # Définition de la classe Scientifique qui hérite de la classe User
 class Scientifique(User):
 
     # Constructeur de la classe Scientifique
-    def __init__(self, nom, prenom, email, num_tel, role, droit, numero, code_projet, date_prise_fonction, login='', password=''):
-        super().__init__(nom, prenom, email, num_tel, role, droit, login, password)
+    def __init__(self, nom, prenom, email, num_tel, role, droit,unite,region, numero, code_projet, date_prise_fonction, login='', password=''):
+        super().__init__(nom, prenom, email, num_tel, role, droit,unite,region, login, password)
         self.__numero = numero
         self.__code_projet = code_projet
         self.__date_prise_fonction = date_prise_fonction

@@ -5,7 +5,6 @@ from User import *
 import customtkinter as ctk
 from tkinter import messagebox, YES
 import sqlite3
-
 # Connexion à la base de données
 connexion = sqlite3.connect('bdd.db')
 curseur = connexion.cursor()
@@ -21,6 +20,7 @@ mdpscientifique = curseur.execute('SELECT password FROM scientifique').fetchall(
 
 # Création de la fenêtre principale et attribution de ses caractéristiques
 windows = ctk.CTk()
+
 windows.title("SNT LABO")
 windows.geometry("500x400")# Créer le widget Text
 windows.grid_rowconfigure(0, weight=1)
@@ -30,7 +30,6 @@ scrollable_frame = ctk.CTkScrollableFrame(windows, width=200, height=200)
 # Création des frames
 # création de la frame pour scroll dans la fenêtre principale
 fram_scroll = ctk.CTkScrollableFrame(windows, fg_color="transparent")
-
 frame_authentication = ctk.CTkFrame(fram_scroll, fg_color="transparent")
 frame_btn_choix = ctk.CTkFrame(fram_scroll, fg_color="transparent")
 frame_ajout_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
@@ -43,7 +42,6 @@ frame_doc_medecin = ctk.CTkFrame(fram_scroll, fg_color="transparent")
 frame_doc_commercial = ctk.CTkFrame(fram_scroll, fg_color="transparent")
 frame_doc_collaborateur = ctk.CTkFrame(fram_scroll, fg_color="transparent")
 fram_scroll.pack(fill='both', expand=True)
-
 # Fonction de connexion
 def connexion_user():
     global entre_login
@@ -559,6 +557,6 @@ def affichage_doc_collaborateur():
     doc2 = ctk.CTkLabel(frame_doc_collaborateur, text='Document 2', font=('Arial', 20)).pack(pady=10)
     doc3 = ctk.CTkLabel(frame_doc_collaborateur, text='Document 3', font=('Arial', 20)).pack(pady=10)
     # Creation du bouton pour quitter
-    ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=windows.destroy).pack(pady=10)
+    ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
