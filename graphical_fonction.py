@@ -30,18 +30,12 @@ scrollable_frame = ctk.CTkScrollableFrame(windows, width=200, height=200)
 # Création des frames
 # création de la frame pour scroll dans la fenêtre principale
 fram_scroll = ctk.CTkScrollableFrame(windows, fg_color="transparent")
-frame_authentication = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_btn_choix = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_ajout_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_ajouter = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_modif_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_list_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_suppr_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_science = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_doc_medecin = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_doc_commercial = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-frame_doc_collaborateur = ctk.CTkFrame(fram_scroll, fg_color="transparent")
-fram_scroll.pack(fill='both', expand=True)
+frame_authentication = ctk.CTkFrame(windows, fg_color="transparent")
+frame_science = ctk.CTkFrame(windows, fg_color="transparent")
+frame_doc_medecin = ctk.CTkFrame(windows, fg_color="transparent")
+frame_doc_commercial = ctk.CTkFrame(windows, fg_color="transparent")
+frame_doc_collaborateur = ctk.CTkFrame(windows, fg_color="transparent")
+
 # Fonction de connexion
 def connexion_user():
     global entre_login
@@ -116,6 +110,18 @@ def connexion_user():
     # Empaquetage de la frame
     frame_authentication.pack(fill='both', expand=True)
 def mainframe():
+    global frame_btn_choix,frame_ajouter, frame_modif_user, frame_suppr_user, frame_list_user, frame_ajout_user, frame_suppr_user
+    frame_ajout_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
+    frame_ajouter = ctk.CTkFrame(fram_scroll, fg_color="transparent")
+    frame_modif_user = ctk.CTkFrame(windows, fg_color="transparent")
+    frame_list_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
+    frame_suppr_user = ctk.CTkFrame(windows, fg_color="transparent")
+    frame_btn_choix = ctk.CTkFrame(windows, fg_color="transparent")
+    global cpt_frame_ajouter
+    cpt_frame_ajouter = 0
+    cpt_frame_modif = 0
+    cpt_frame_suppr = 0
+    cpt_frame_list = 0
     # creation des fonctions pour les boutons
     def retour():
         frame_btn_choix.pack_forget()
@@ -123,11 +129,15 @@ def mainframe():
         entre_login.delete(0, 'end')
         entre_mdp.delete(0, 'end')
 
-
     def ajouter():
+        global cpt_frame_ajouter
         frame_btn_choix.pack_forget()
-        frame_ajouter.pack_forget()
-        ajout_user()
+        if cpt_frame_ajouter == 0:
+            cpt_frame_ajouter = 1
+            ajout_user()
+        else:
+            frame_ajout_user.pack()
+            frame_ajouter.pack(expand=YES)
 
     def modifier():
         frame_btn_choix.pack_forget()
@@ -187,27 +197,35 @@ def ajout_user():
                     messagebox.showerror("Erreur", "Veuillez remplir tous les champs")
                     return
                 # Creation de l'objet scientifique
-                user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),entere_role.get(), enter_droit.get(),enter_region.get(),enter_unite.get(), entere_numero.get(), enter_code_projet.get(), enter_date_prise_fonction.get())
+                user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
+                                    entere_role.get(), enter_droit.get(), enter_region.get(), enter_unite.get(),
+                                    entere_numero.get(), enter_code_projet.get(), enter_date_prise_fonction.get())
                 # Génération du login et du mot de passe
                 user.genrate_login()
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
-                curseur.execute('INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',(user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.numero, user.code_projet, user.date_prise_fonction, user.login(), hashlib.sha256(user.password.encode()).hexdigest()))
+                curseur.execute(
+                    'INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.numero,
+                     user.code_projet, user.date_prise_fonction, user.login(),
+                     hashlib.sha256(user.password.encode()).hexdigest()))
             else:
                 # Creation de l'objet user
-                user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(), entere_role.get(), enter_droit.get(), enter_region.get(), enter_unite.get())
+                user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
+                            entere_role.get(), enter_droit.get(), enter_region.get(), enter_unite.get())
                 user.genrate_login()
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
-                curseur.execute('INSERT INTO users (nom, prenom, email, num_tel, role, droit,region, unite, login, password) VALUES (?,?,?,?,?,?,?,?,?,?)',(user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.region, user.unite, user.login, hashlib.sha256(user.password.encode()).hexdigest()))
-
-
+                curseur.execute(
+                    'INSERT INTO users (nom, prenom, email, num_tel, role, droit,region, unite, login, password) VALUES (?,?,?,?,?,?,?,?,?,?)',
+                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.region, user.unite,
+                     user.login, hashlib.sha256(user.password.encode()).hexdigest()))
 
             # Vérification du droit
             while True:
                 droit = enter_droit.get()
                 # si le droit n'est pas correct, afficher un message d'erreur
-                if droit not in ['md', 'cm', 'etc','sc']:
+                if droit not in ['md', 'cm', 'etc', 'sc']:
                     messagebox.showerror("Erreur", "Droit incorrect, veuillez réessayer.")
                     return
                 else:
@@ -215,19 +233,29 @@ def ajout_user():
 
             connexion.commit()
 
-            # Effacement des frames et affichage d'un message de succès
-            frame_ajout_user.pack_forget()
-            frame_ajouter.pack_forget()
-            frame_btn_choix.pack()
+            # Affichage d'un message de succès
             messagebox.showinfo("Succès",
                                 f"Utilisateur ajouté avec succès\nLogin : {user.login}\nMot de passe : {user.password}")
 
         except sqlite3.Error as e:
-            # En cas d'erreur, afficher un message d'erreur et effacer les frames
+            # En cas d'erreur, afficher un message d'erreur
             messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
-            frame_ajout_user.pack_forget()
-            frame_ajouter.pack_forget()
-            frame_btn_choix.pack()
+
+        # Fonction pour l'affichage des champs supplémentaires pour le scientifique
+
+    def affichage_scientifique():
+        # Si le bouton est activé, afficher les champs supplémentaires
+        if switch_var.get() == True:
+            entere_numero.pack(pady=10)
+            label_prise_fonction.pack(pady=10)
+            enter_date_prise_fonction.pack(pady=10)
+            enter_code_projet.pack(pady=10)
+        # Sinon, les cacher
+        else:
+            entere_numero.pack_forget()
+            enter_date_prise_fonction.pack_forget()
+            enter_code_projet.pack_forget()
+            label_prise_fonction.pack_forget()
     # Fonction pour l'affichage des champs supplémentaires pour le scientifique
     def affichage_scientifique():
         # Si le bouton est activé, afficher les champs supplémentaires
@@ -251,6 +279,7 @@ def ajout_user():
     def retour():
         frame_ajout_user.pack_forget()
         frame_ajouter.pack_forget()
+        fram_scroll.pack_forget()
         mainframe()
 
 
@@ -314,8 +343,9 @@ def ajout_user():
     ctk.CTkButton(frame_ajouter, text="Quitter", fg_color="grey", font=("Arial", 20), command=retour).pack(pady=10)
 
     # Empaquetage des frames
-    frame_ajout_user.pack(pady=50,expand=YES)
+    frame_ajout_user.pack(pady=50, expand=YES)
     frame_ajouter.pack(expand=YES)
+    fram_scroll.pack(fill='both', expand=True)
 
 def modif_user():
     def modifier_user():
@@ -451,6 +481,7 @@ def suppr_user():
 def list_user():
     def quitter():
         frame_list_user.pack_forget()
+        fram_scroll.pack_forget()
         mainframe()
 
     # Recuperation des données de la base de données
@@ -470,6 +501,7 @@ def list_user():
     ctk.CTkButton(frame_list_user, text="Retour", fg_color="grey", font=("Arial", 20), command=quitter).pack(pady=10)
 
     frame_list_user.pack(expand=YES)
+    fram_scroll.pack(fill='both', expand=True)
 def document_scientifique(log):
     def retour():
         frame_science.pack_forget()
@@ -564,5 +596,3 @@ def affichage_doc_collaborateur():
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
-mainframe()
-windows.mainloop()
