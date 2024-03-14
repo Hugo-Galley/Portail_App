@@ -126,19 +126,23 @@ def mainframe():
 
     def ajouter():
         frame_btn_choix.pack_forget()
+        frame_ajouter.pack_forget()
         ajout_user()
 
     def modifier():
         frame_btn_choix.pack_forget()
+        frame_modif_user.pack_forget()
         modif_user()
 
     def supprimmer():
         frame_btn_choix.pack_forget()
+        frame_suppr_user.pack_forget()
         suppr_user()
 
 
     def lister():
         frame_btn_choix.pack_forget()
+        frame_list_user.pack_forget()
         list_user()
 
 
@@ -360,7 +364,7 @@ def modif_user():
             else :
                 messagebox.showinfo("Succès", "Utilisateur modifié avec succès")
                 frame_modif_user.pack_forget()
-                mainframe()
+                frame_btn_choix.pack()
 
         # En cas d'erreur, afficher un message d'erreur et effacer les frames
         except Exception as e:
@@ -370,7 +374,7 @@ def modif_user():
 
     def retour():
         frame_modif_user.pack_forget()
-        mainframe()
+        frame_btn_choix.pack()
 
     # Creation des labels
     label_nom = ctk.CTkLabel(frame_modif_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
@@ -560,3 +564,5 @@ def affichage_doc_collaborateur():
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
+mainframe()
+windows.mainloop()
