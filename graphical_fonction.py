@@ -45,6 +45,7 @@ def connexion_user():
     windows.geometry("500x400")
 
     def verif():
+        cpt_tentative = 0
         # Essayer de se connecter à la base de données
         try:
             liste_user = []
@@ -71,6 +72,10 @@ def connexion_user():
             # Affichage d'un message d'erreur si les identifiants sont incorrects
             else:
                 messagebox.showerror("Erreur", "Login ou mot de passe incorrect")
+                cpt_tentative += 1
+                if cpt_tentative == 3:
+                    messagebox.showerror("Erreur", "Nombre de tentative dépassé")
+                    windows.destroy()
         # En cas d'erreur, afficher un message d'erreur
         except Exception as e:
             messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
