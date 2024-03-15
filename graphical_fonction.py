@@ -5,6 +5,7 @@ from User import *
 import customtkinter as ctk
 from tkinter import messagebox, YES
 import sqlite3
+
 # Connexion à la base de données
 connexion = sqlite3.connect('bdd.db')
 curseur = connexion.cursor()
@@ -22,7 +23,7 @@ mdpscientifique = curseur.execute('SELECT password FROM scientifique').fetchall(
 windows = ctk.CTk()
 
 windows.title("SNT LABO")
-windows.geometry("500x400")# Créer le widget Text
+windows.geometry("500x400")  # Créer le widget Text
 windows.grid_rowconfigure(0, weight=1)
 windows.grid_columnconfigure(0, weight=1)
 scrollable_frame = ctk.CTkScrollableFrame(windows, width=200, height=200)
@@ -36,14 +37,16 @@ frame_doc_medecin = ctk.CTkFrame(windows, fg_color="transparent")
 frame_doc_commercial = ctk.CTkFrame(windows, fg_color="transparent")
 frame_doc_collaborateur = ctk.CTkFrame(windows, fg_color="transparent")
 
+
 # Fonction de connexion
 def connexion_user():
     global entre_login
     global entre_mdp
     # definition de la taille de la fenetre
     windows.geometry("500x400")
+
     def verif():
-        #Essayer de se connecter à la base de données
+        # Essayer de se connecter à la base de données
         try:
             liste_user = []
             liste_mdp = []
@@ -59,7 +62,8 @@ def connexion_user():
                 frame_authentication.pack_forget()
                 mainframe()
             # Vérification des identifiants pour les scientifiques
-            elif entre_login.get() in [log[0] for log in logscientifique] and hashed_password in [mdp[0] for mdp in mdpscientifique]:
+            elif entre_login.get() in [log[0] for log in logscientifique] and hashed_password in [mdp[0] for mdp in
+                                                                                                  mdpscientifique]:
                 frame_authentication.pack_forget()
                 document_scientifique(entre_login.get())
             # Vérification des identifiants pour les users
@@ -99,8 +103,9 @@ def connexion_user():
 
     # Créer la case à cocher pour afficher/masquer le mot de passe
     show_password = ctk.BooleanVar()
-    show_password_checkbox = ctk.CTkCheckBox(frame_authentication, text="Afficher le mot de passe", variable=show_password,
-                                            onvalue=True, offvalue=False, command=toggle_show_password)
+    show_password_checkbox = ctk.CTkCheckBox(frame_authentication, text="Afficher le mot de passe",
+                                             variable=show_password,
+                                             onvalue=True, offvalue=False, command=toggle_show_password)
     show_password_checkbox.pack(pady=5)
 
     # Créer le bouton de connexion
@@ -109,14 +114,17 @@ def connexion_user():
     btn_connexion.pack(pady=10)
     # Empaquetage de la frame
     frame_authentication.pack(fill='both', expand=True)
+
+
 def mainframe():
-    global frame_btn_choix,frame_ajouter, frame_modif_user, frame_suppr_user, frame_list_user, frame_ajout_user, frame_suppr_user
+    global frame_btn_choix, frame_ajouter, frame_modif_user, frame_suppr_user, frame_list_user, frame_ajout_user, frame_suppr_user
     frame_ajout_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
     frame_ajouter = ctk.CTkFrame(fram_scroll, fg_color="transparent")
     frame_modif_user = ctk.CTkFrame(windows, fg_color="transparent")
     frame_list_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
     frame_suppr_user = ctk.CTkFrame(windows, fg_color="transparent")
     frame_btn_choix = ctk.CTkFrame(windows, fg_color="transparent")
+
     # creation des fonctions pour les boutons
     def retour():
         frame_btn_choix.pack_forget()
@@ -139,12 +147,10 @@ def mainframe():
         frame_suppr_user.pack_forget()
         suppr_user()
 
-
     def lister():
         frame_btn_choix.pack_forget()
         frame_list_user.pack_forget()
         list_user()
-
 
     windows.geometry("600x500")
     # Creation des labels
@@ -172,6 +178,8 @@ def mainframe():
     btn_quit.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
     # Empaquetage de la frame
     frame_btn_choix.pack(expand=YES)
+
+
 def ajout_user():
     def ajouter_user():
         try:
@@ -196,7 +204,7 @@ def ajout_user():
                 # Insertion de l'utilisateur dans la base de données
                 curseur.execute(
                     'INSERT INTO scientifique (nom, prenom, email, num_tel, role,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
-                    (user.nom, user.prenom, user.email, user.num_tel, user.role,user.numero,
+                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.numero,
                      user.code_projet, user.date_prise_fonction, user.login(),
                      hashlib.sha256(user.password.encode()).hexdigest()))
             else:
@@ -246,8 +254,9 @@ def ajout_user():
             enter_date_prise_fonction.pack_forget()
             enter_code_projet.pack_forget()
             label_prise_fonction.pack_forget()
+
     # Fonction pour l'affichage des champs supplémentaires pour le scientifique
-    def affichage_scientifique():
+    def affichage_scientifiquee():
         # Si le bouton est activé, afficher les champs supplémentaires
         if switch_var.get() == True:
             entere_numero.pack(pady=10)
@@ -260,74 +269,86 @@ def ajout_user():
             enter_date_prise_fonction.pack_forget()
             enter_code_projet.pack_forget()
             label_prise_fonction.pack_forget()
+
     choix_anne = 2024
 
     # Recuperation de l'année choisie
     def combobox_calllback(choice):
         choix_anne = choice
+
     def combobox_calllback_role(choice):
         choix_role = choice
+
     def retour():
         frame_ajout_user.pack_forget()
         frame_ajouter.pack_forget()
         fram_scroll.pack_forget()
         mainframe()
 
-
-# Creation des variables
+    # Creation des variables
     switch_var = ctk.BooleanVar(value=False)
     switch_var_medecin = ctk.BooleanVar(value=False)
-
 
     windows.geometry("600x900")
     # Creation des labels
     label_nom = ctk.CTkLabel(frame_ajout_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
     label_nom.pack(pady=40)
 
-    label_nom = ctk.CTkLabel(frame_ajout_user, text="Ajouter un utilisateur", fg_color="transparent", font=("Arial", 20))
+    label_nom = ctk.CTkLabel(frame_ajout_user, text="Ajouter un utilisateur", fg_color="transparent",
+                             font=("Arial", 20))
     label_nom.pack(padx=10, pady=10)
     # Creation des champs de saisie
-    enter_nom = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Nom')
+    enter_nom = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                             placeholder_text='Nom')
     enter_nom.pack(pady=10)
 
-    enter_prenom = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Prenom')
+    enter_prenom = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                                placeholder_text='Prenom')
     enter_prenom.pack(pady=10)
 
-    enter_email = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Email')
+    enter_email = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                               placeholder_text='Email')
     enter_email.pack(pady=10)
 
-    enter_num_tel = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Numero de telephone')
+    enter_num_tel = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                                 placeholder_text='Numero de telephone')
     enter_num_tel.pack(pady=10)
 
-
-    entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale','Autres'],command=combobox_calllback_role)
+    entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale', 'Autres'],
+                                  command=combobox_calllback_role)
     entere_role.pack(pady=10)
 
-    enter_size = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Taille du mot de passe')
+    enter_size = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                              placeholder_text='Taille du mot de passe')
     enter_size.pack(pady=10)
 
-    enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Region')
+    enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                                placeholder_text='Region')
     enter_region.pack(pady=10)
 
-    enter_unite = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Unite')
+    enter_unite = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+                               placeholder_text='Unite')
     enter_unite.pack(pady=10)
 
     # Creation du bouton pour activer ou désactiver les champs supplémentaires pour le scientifique
     ctk.CTkSwitch(frame_ajout_user, text="Scientifique", variable=switch_var, onvalue=True,
-                                        offvalue=False, command=affichage_scientifique).pack()
-
+                  offvalue=False, command=affichage_scientifiquee).pack()
 
     entere_numero = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                  placeholder_text='Numero de labo')
-    label_prise_fonction = ctk.CTkLabel(frame_ajout_user, text="Date de prise de fonction", fg_color="transparent", font=("Arial", 20))
+    label_prise_fonction = ctk.CTkLabel(frame_ajout_user, text="Date de prise de fonction", fg_color="transparent",
+                                        font=("Arial", 20))
     # Creation de la liste déroulante pour l'année de prise de fonction
-    liste_anne = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '1998', '1997']
-    enter_date_prise_fonction = ctk.CTkComboBox(frame_ajout_user, values=liste_anne,command=combobox_calllback)
+    liste_anne = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013',
+                  '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001',
+                  '2000', '1999', '1998', '1997']
+    enter_date_prise_fonction = ctk.CTkComboBox(frame_ajout_user, values=liste_anne, command=combobox_calllback)
 
     enter_code_projet = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                      placeholder_text='Code du projet')
 
-    ctk.CTkButton(frame_ajouter, text="Ajouter", fg_color="grey", font=("Arial", 20),command=ajouter_user,width=300).pack()
+    ctk.CTkButton(frame_ajouter, text="Ajouter", fg_color="grey", font=("Arial", 20), command=ajouter_user,
+                  width=300).pack()
 
     ctk.CTkButton(frame_ajouter, text="Quitter", fg_color="grey", font=("Arial", 20), command=retour).pack(pady=10)
 
@@ -335,6 +356,7 @@ def ajout_user():
     frame_ajout_user.pack(pady=50, expand=YES)
     frame_ajouter.pack(expand=YES)
     fram_scroll.pack(fill='both', expand=True)
+
 
 def modif_user():
     def modifier_user():
@@ -348,7 +370,8 @@ def modif_user():
                 # Si l'utilisateur est trouvé, création de l'objet user
                 if user_data[9] == enter_nom.get():
 
-                    user = User(user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5], user_data[6], user_data[7], user_data[8])
+                    user = User(user_data[0], user_data[1], user_data[2], user_data[3], user_data[4], user_data[5],
+                                user_data[6], user_data[7], user_data[8])
                     user_trouve = True
                     # Modification des données de l'utilisateur
                     if option_menu.get() == "Nom":
@@ -365,7 +388,7 @@ def modif_user():
                         curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.num_tel, enter_nom.get()))
                     if option_menu.get() == "Role":
                         # Verification du droit
-                        if enter_modif.get() not in ['md', 'cm', 'etc','sc']:
+                        if enter_modif.get() not in ['md', 'cm', 'etc', 'sc']:
                             messagebox.showerror("Erreur", "Role incorrect")
                         else:
                             user.set_role(enter_modif.get())
@@ -374,11 +397,11 @@ def modif_user():
                     connexion.commit()
             # Si l'utilisateur n'est pas trouvé, afficher un message d'erreur
             if not user_trouve:
-               messagebox.showerror("Erreur", "Utilisateur non trouvé")
-               frame_modif_user.pack_forget()
-               mainframe()
+                messagebox.showerror("Erreur", "Utilisateur non trouvé")
+                frame_modif_user.pack_forget()
+                mainframe()
             # Sinon, afficher un message de succès et effacer les frames
-            else :
+            else:
                 messagebox.showinfo("Succès", "Utilisateur modifié avec succès")
                 frame_modif_user.pack_forget()
                 frame_btn_choix.pack()
@@ -397,22 +420,26 @@ def modif_user():
     label_nom = ctk.CTkLabel(frame_modif_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
     label_nom.pack(pady=40)
     # Creation des champs de saisie
-    enter_nom = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='login')
+    enter_nom = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300,
+                             placeholder_text='login')
     enter_nom.pack(pady=10)
     # Creation de la liste déroulante pour les années
     options = ["Nom", "Prenom", "Email", "Numero de telephone", "Role"]
     option_menu = ctk.CTkOptionMenu(frame_modif_user, values=options)
     option_menu.pack(pady=10)
 
-    enter_modif = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Nouvelle Valeur')
+    enter_modif = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300,
+                               placeholder_text='Nouvelle Valeur')
     enter_modif.pack(pady=10)
     # Creation du bouton pour modifier l'utilisateur
-    btn_connexion = ctk.CTkButton(frame_modif_user, text="Modifier", fg_color="grey", font=("Arial", 20), command=modifier_user,width=300)
+    btn_connexion = ctk.CTkButton(frame_modif_user, text="Modifier", fg_color="grey", font=("Arial", 20),
+                                  command=modifier_user, width=300)
     btn_connexion.pack(pady=10)
     # Creation du bouton pour quitter
     ctk.CTkButton(frame_modif_user, text="Quitter", fg_color="grey", font=("Arial", 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_modif_user.pack(pady=40)
+
 
 def suppr_user():
     def supprimer_user():
@@ -435,7 +462,6 @@ def suppr_user():
                     messagebox.showerror(title="Reussite", message="Utilisateur supprimé avec succès")
                     break
 
-
             frame_suppr_user.pack_forget()
             mainframe()
         # En cas d'erreur, afficher un message d'erreur et effacer les frames
@@ -444,24 +470,26 @@ def suppr_user():
             frame_suppr_user.pack_forget()
             mainframe()
 
-
     def retour():
         frame_suppr_user.pack_forget()
         mainframe()
 
     # Création des labels
     label_nom = ctk.CTkLabel(frame_suppr_user, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
-    label_nom.pack(pady = 40)
+    label_nom.pack(pady=40)
     # Création des champs de saisie
-    enter_nom = ctk.CTkEntry(frame_suppr_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='login')
+    enter_nom = ctk.CTkEntry(frame_suppr_user, fg_color="transparent", font=("Arial", 20), width=300,
+                             placeholder_text='login')
     enter_nom.pack(pady=10)
     # Création du bouton pour supprimer l'utilisateur
-    btn_supprimer = ctk.CTkButton(frame_suppr_user, text="Supprimer", fg_color="grey", font=("Arial", 20), command=supprimer_user,width=300)
+    btn_supprimer = ctk.CTkButton(frame_suppr_user, text="Supprimer", fg_color="grey", font=("Arial", 20),
+                                  command=supprimer_user, width=300)
     btn_supprimer.pack(pady=10)
     # Création du bouton pour quitter
     ctk.CTkButton(frame_suppr_user, text="Quitter", fg_color="grey", font=("Arial", 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_suppr_user.pack(expand=YES)
+
 
 def list_user():
     def quitter():
@@ -487,15 +515,21 @@ def list_user():
 
     frame_list_user.pack(expand=YES)
     fram_scroll.pack(fill='both', expand=True)
+
+
 def document_scientifique(log):
+    global user
+
     def retour():
         frame_science.pack_forget()
         connexion_user()
+
     # Recuperation des données de la base de données
     data = curseur.execute('SELECT * FROM scientifique WHERE login = ?', (log,)).fetchall()
     for info in data:
         # Creation de l'objet scientifique
-        user = Scientifique(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10],info[11])
+        user = Scientifique(info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8], info[9], info[10],
+                            info[11])
     # Verification si l'utilisateur est responsable
     if user.savoir_responsable():
         ctk.CTkLabel(frame_science, text="Vous êtes responsable", fg_color="transparent", font=("Arial", 20)).pack()
@@ -503,20 +537,25 @@ def document_scientifique(log):
     # Creation des labels
     label_nom = ctk.CTkLabel(frame_science, text="SNT LABO", fg_color="transparent", font=("Arial", 40))
     label_nom.pack()
-    ctk.CTkLabel(frame_science, text="---------------------------------------------", fg_color="transparent", font=("Arial", 20)).pack()
-    label_nom = ctk.CTkLabel(frame_science, text="Bienvenue sur l'interface scientifique", fg_color="transparent", font=("Arial", 20))
+    ctk.CTkLabel(frame_science, text="---------------------------------------------", fg_color="transparent",
+                 font=("Arial", 20)).pack()
+    label_nom = ctk.CTkLabel(frame_science, text="Bienvenue sur l'interface scientifique", fg_color="transparent",
+                             font=("Arial", 20))
     label_nom.pack(padx=10, pady=10)
-    ctk.CTkLabel(frame_science, text="---------------------------------------------", fg_color="transparent", font=("Arial", 20)).pack()
+    ctk.CTkLabel(frame_science, text="---------------------------------------------", fg_color="transparent",
+                 font=("Arial", 20)).pack()
     # Creation des boutons
     ctk.CTkButton(frame_science, text="Quitter", fg_color="grey", font=("Arial", 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_science.pack(expand=YES)
 
+
 def affichage_document(log):
+    global user
     data = curseur.execute('SELECT * FROM users WHERE login = ?', (log,)).fetchall()
-    for info in data :
+    for info in data:
         # Creation de l'objet user
-        user = User(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9])
+        user = User(info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8], info[9])
     # Verification du droit pour l'affichage des documents
     if user.role() == 'md':
         affichage_doc_medecin()
@@ -527,8 +566,8 @@ def affichage_document(log):
     else:
         messagebox.showerror('Erreur', 'Erreur de role')
 
-def affichage_doc_medecin():
 
+def affichage_doc_medecin():
     def retour():
         frame_doc_medecin.pack_forget()
         connexion_user()
@@ -537,16 +576,16 @@ def affichage_doc_medecin():
     # Creation des labels
     titre = ctk.CTkLabel(frame_doc_medecin, text='Espace Medecin', font=('Arial', 30)).pack(pady=20)
 
-    doc1 = ctk.CTkLabel(frame_doc_medecin, text='Document 1', font=('Arial', 20)).pack(pady=10)
-    doc2 = ctk.CTkLabel(frame_doc_medecin, text='Document 2', font=('Arial', 20)).pack(pady=10)
-    doc3 = ctk.CTkLabel(frame_doc_medecin, text='Document 3', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_medecin, text='Document 1', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_medecin, text='Document 2', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_medecin, text='Document 3', font=('Arial', 20)).pack(pady=10)
     # Creation du bouton pour quitter
     ctk.CTkButton(frame_doc_medecin, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_medecin.pack(expand=YES)
 
-def affichage_doc_commericale():
 
+def affichage_doc_commericale():
     def retour():
         frame_doc_commercial.pack_forget()
         connexion_user()
@@ -556,15 +595,16 @@ def affichage_doc_commericale():
     # Creation des labels
     titre = ctk.CTkLabel(frame_doc_commercial, text='Espace Commerciale', font=('Arial', 30)).pack(pady=20)
 
-    doc1 = ctk.CTkLabel(frame_doc_commercial, text='Document 1', font=('Arial', 20)).pack(pady=10)
-    doc2 = ctk.CTkLabel(frame_doc_commercial, text='Document 2', font=('Arial', 20)).pack(pady=10)
-    doc3 = ctk.CTkLabel(frame_doc_commercial, text='Document 3', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_commercial, text='Document 1', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_commercial, text='Document 2', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_commercial, text='Document 3', font=('Arial', 20)).pack(pady=10)
     # Creation du bouton pour quitter
     ctk.CTkButton(frame_doc_commercial, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_commercial.pack(expand=YES)
-def affichage_doc_collaborateur():
 
+
+def affichage_doc_collaborateur():
     def retour():
         frame_doc_collaborateur.pack_forget()
         connexion_user()
@@ -574,9 +614,9 @@ def affichage_doc_collaborateur():
     # Creation des labels
     titre = ctk.CTkLabel(frame_doc_collaborateur, text='Espace Collaborateur', font=('Arial', 30)).pack(pady=20)
 
-    doc1 = ctk.CTkLabel(frame_doc_collaborateur, text='Document 1', font=('Arial', 20)).pack(pady=10)
-    doc2 = ctk.CTkLabel(frame_doc_collaborateur, text='Document 2', font=('Arial', 20)).pack(pady=10)
-    doc3 = ctk.CTkLabel(frame_doc_collaborateur, text='Document 3', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_collaborateur, text='Document 1', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_collaborateur, text='Document 2', font=('Arial', 20)).pack(pady=10)
+    ctk.CTkLabel(frame_doc_collaborateur, text='Document 3', font=('Arial', 20)).pack(pady=10)
     # Creation du bouton pour quitter
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
