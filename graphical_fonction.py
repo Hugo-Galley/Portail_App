@@ -21,9 +21,8 @@ mdpscientifique = curseur.execute('SELECT password FROM scientifique').fetchall(
 
 # Création de la fenêtre principale et attribution de ses caractéristiques
 windows = ctk.CTk()
-
 windows.title("SNT LABO")
-windows.geometry("500x400")  # Créer le widget Text
+windows.geometry("500x400")
 windows.grid_rowconfigure(0, weight=1)
 windows.grid_columnconfigure(0, weight=1)
 scrollable_frame = ctk.CTkScrollableFrame(windows, width=200, height=200)
@@ -62,8 +61,7 @@ def connexion_user():
                 frame_authentication.pack_forget()
                 mainframe()
             # Vérification des identifiants pour les scientifiques
-            elif entre_login.get() in [log[0] for log in logscientifique] and hashed_password in [mdp[0] for mdp in
-                                                                                                  mdpscientifique]:
+            elif entre_login.get() in [log[0] for log in logscientifique] and hashed_password in [mdp[0] for mdp in mdpscientifique]:
                 frame_authentication.pack_forget()
                 document_scientifique(entre_login.get())
             # Vérification des identifiants pour les users
@@ -117,6 +115,7 @@ def connexion_user():
 
 
 def mainframe():
+    # Creation des frames de maniere global pour les utiliser dans les autres fonctions
     global frame_btn_choix, frame_ajouter, frame_modif_user, frame_suppr_user, frame_list_user, frame_ajout_user, frame_suppr_user
     frame_ajout_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
     frame_ajouter = ctk.CTkFrame(fram_scroll, fg_color="transparent")
@@ -276,6 +275,7 @@ def ajout_user():
     def combobox_calllback(choice):
         choix_anne = choice
 
+    # Recuperation du role choisi
     def combobox_calllback_role(choice):
         choix_role = choice
 
@@ -552,6 +552,7 @@ def document_scientifique(log):
 
 def affichage_document(log):
     global user
+    # Recuperation des données de la base de données
     data = curseur.execute('SELECT * FROM users WHERE login = ?', (log,)).fetchall()
     for info in data:
         # Creation de l'objet user
