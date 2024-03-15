@@ -331,10 +331,11 @@ def ajout_user():
     enter_size = ctk.CTkComboBox(frame_ajout_user, values=['8', '10', '12', '14', '16', '18', '20', '22', '24', '26'],command=combobox_calllback_mdp)
     enter_size.pack(pady=10)
 
-    enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
-                                placeholder_text='Region')
-    enter_region.pack(pady=10)
+    #enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
+    #                            placeholder_text='Region')
 
+    ctk.CTkLabel(frame_ajout_user, text="Région", fg_color="transparent", font=("Arial", 20)).pack()
+    enter_region = ctk.CTkComboBox(frame_ajout_user, values=['Strasbourg', 'Rennes', 'Marseille', 'Grenoble', 'Bordeaux','Toulouse'], command=combobox_calllback).pack(pady=10)
     enter_unite = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                placeholder_text='Unite')
     enter_unite.pack(pady=10)
@@ -631,3 +632,6 @@ def affichage_doc_collaborateur():
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
+
+mainframe()
+windows.mainloop()
