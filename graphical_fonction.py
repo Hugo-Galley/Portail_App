@@ -176,7 +176,7 @@ def ajout_user():
     def ajouter_user():
         try:
             # Vérification des champs obligatoires pour l'utilisateur de base
-            if enter_nom.get() == "" or enter_prenom.get() == "" or enter_email.get() == "" or enter_num_tel.get() == "" or enter_droit.get() == "" or entere_role.get() == "":
+            if enter_nom.get() == "" or enter_prenom.get() == "" or enter_email.get() == "" or enter_num_tel.get() == "" or entere_role.get() == "":
                 messagebox.showerror("Erreur", "Veuillez remplir tous les champs")
                 return
 
@@ -366,9 +366,9 @@ def modif_user():
                     if option_menu.get() == "Role":
                         # Verification du droit
                         if enter_modif.get() not in ['md', 'cm', 'etc','sc']:
-                            messagebox.showerror("Erreur", "Droit incorrect")
+                            messagebox.showerror("Erreur", "Role incorrect")
                         else:
-                            user.set_droit(enter_modif.get())
+                            user.set_role(enter_modif.get())
                             curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.role, enter_nom.get()))
 
                     connexion.commit()
@@ -445,8 +445,6 @@ def suppr_user():
             mainframe()
 
 
-
-
     def retour():
         frame_suppr_user.pack_forget()
         mainframe()
@@ -478,7 +476,7 @@ def list_user():
     Logo.pack(pady=40)
     for user in data:
         label_nom = ctk.CTkLabel(frame_list_user,
-                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit : {user[6]} Region : {user[7]} Unite : {user[8]} Login : {user[9]}',
+                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit {user[6]} Unite : {user[7]} Login : {user[9]}',
                                  fg_color="transparent", font=("Arial", 20))
         ctk.CTkLabel(frame_list_user, text="---------------------------------------------", fg_color="transparent",
                      font=("Arial", 12)).pack()
