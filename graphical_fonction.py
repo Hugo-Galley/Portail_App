@@ -185,6 +185,7 @@ def mainframe():
 
 
 def ajout_user():
+
     def ajouter_user():
         try:
             # Vérification des champs obligatoires pour l'utilisateur de base
@@ -207,9 +208,9 @@ def ajout_user():
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
                 curseur.execute(
-                    'INSERT INTO scientifique (nom, prenom, email, num_tel, role,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
-                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.numero,
-                     user.code_projet, user.date_prise_fonction, user.login(),
+                    'INSERT INTO scientifique (nom, prenom, email, num_tel, role, region, unite, numero, code_projet, date_prise_foncion, login, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',
+                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.region, user.unite, user.numero,
+                     user.code_projet, user.date_prise_fonction, user.login,
                      hashlib.sha256(user.password.encode()).hexdigest()))
             else:
                 # Creation de l'objet user
@@ -279,6 +280,8 @@ def ajout_user():
     # Recuperation de l'année choisie
     def combobox_calllback(choice):
         choix_anne = choice
+    def combobox_calllback_mdp(choice):
+        choix_mdp = choice
 
     # Recuperation du role choisi
     def combobox_calllback_role(choice):
@@ -319,12 +322,13 @@ def ajout_user():
                                  placeholder_text='Numero de telephone')
     enter_num_tel.pack(pady=10)
 
+    ctk.CTkLabel(frame_ajout_user, text="Role", fg_color="transparent", font=("Arial", 20)).pack()
+
     entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale', 'Autres'],
                                   command=combobox_calllback_role)
     entere_role.pack(pady=10)
-
-    enter_size = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
-                              placeholder_text='Taille du mot de passe')
+    ctk.CTkLabel(frame_ajout_user, text="Taille MDP", fg_color="transparent", font=("Arial", 20)).pack()
+    enter_size = ctk.CTkComboBox(frame_ajout_user, values=['8', '10', '12', '14', '16', '18', '20', '22', '24', '26'],command=combobox_calllback_mdp)
     enter_size.pack(pady=10)
 
     enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,

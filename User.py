@@ -107,7 +107,7 @@ class Scientifique(User):
         self.__code_projet = code_projet
         self.__date_prise_fonction = date_prise_fonction
         self.__responsable = False
-        self.__unite = []
+        self.__unite = ""
         self.__date_prise_fonction_responsable = ''
 
     def verifier_responsable(self):
