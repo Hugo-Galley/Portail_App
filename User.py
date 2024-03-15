@@ -8,7 +8,7 @@ from tkinter import messagebox
 # Définition de la classe User
 class User:
     # Constructeur de la classe User
-    def __init__(self,nom,prenom,email,num_tel,role,droit,region,unite,login = '',password = ''):
+    def __init__(self,nom,prenom,email,num_tel,role,region,unite,login = '',password = ''):
         self.__nom = nom
         self.__prenom = prenom
         self.__email = email
@@ -17,7 +17,6 @@ class User:
         self.__login = password
         self.__admin = False
         self.__role = role
-        self.__droit = droit
         self.__region = region
         self.__unite = unite
 
@@ -67,9 +66,6 @@ class User:
         return self.__role
 
     @property
-    def droit(self):
-        return self.__droit
-    @property
     def region(self):
         return self.__region
     @property
@@ -96,8 +92,6 @@ class User:
 
     def set_role(self,role):
         self.__role = role
-    def set_droit(self,droit):
-        self.__droit = droit
     def set_region(self,region):
         self.__region = region
     def set_unite(self,unite):
@@ -107,8 +101,8 @@ class User:
 class Scientifique(User):
 
     # Constructeur de la classe Scientifique
-    def __init__(self, nom, prenom, email, num_tel, role, droit,unite,region, numero, code_projet, date_prise_fonction, login='', password=''):
-        super().__init__(nom, prenom, email, num_tel, role, droit,unite,region, login, password)
+    def __init__(self, nom, prenom, email, num_tel, role,unite,region, numero, code_projet, date_prise_fonction, login='', password=''):
+        super().__init__(nom, prenom, email, num_tel, role,unite,region, login, password)
         self.__numero = numero
         self.__code_projet = code_projet
         self.__date_prise_fonction = date_prise_fonction

@@ -6,6 +6,5 @@ from graphical_fonction import *
 
 # Lancement de la fenêtre de connexion
 if __name__ == '__main__':
-
     connexion_user()
     windows.mainloop()

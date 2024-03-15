@@ -117,11 +117,6 @@ def mainframe():
     frame_list_user = ctk.CTkFrame(fram_scroll, fg_color="transparent")
     frame_suppr_user = ctk.CTkFrame(windows, fg_color="transparent")
     frame_btn_choix = ctk.CTkFrame(windows, fg_color="transparent")
-    global cpt_frame_ajouter
-    cpt_frame_ajouter = 0
-    cpt_frame_modif = 0
-    cpt_frame_suppr = 0
-    cpt_frame_list = 0
     # creation des fonctions pour les boutons
     def retour():
         frame_btn_choix.pack_forget()
@@ -130,14 +125,9 @@ def mainframe():
         entre_mdp.delete(0, 'end')
 
     def ajouter():
-        global cpt_frame_ajouter
         frame_btn_choix.pack_forget()
-        if cpt_frame_ajouter == 0:
-            cpt_frame_ajouter = 1
-            ajout_user()
-        else:
-            frame_ajout_user.pack()
-            frame_ajouter.pack(expand=YES)
+        frame_ajout_user.pack_forget()
+        ajout_user()
 
     def modifier():
         frame_btn_choix.pack_forget()
@@ -198,35 +188,35 @@ def ajout_user():
                     return
                 # Creation de l'objet scientifique
                 user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
-                                    entere_role.get(), enter_droit.get(), enter_region.get(), enter_unite.get(),
+                                    entere_role.get(), enter_region.get(), enter_unite.get(),
                                     entere_numero.get(), enter_code_projet.get(), enter_date_prise_fonction.get())
                 # Génération du login et du mot de passe
                 user.genrate_login()
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
                 curseur.execute(
-                    'INSERT INTO scientifique (nom, prenom, email, num_tel, role, droit,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.numero,
+                    'INSERT INTO scientifique (nom, prenom, email, num_tel, role,region, unite,numero,code_projet,date_prise_foncion, login, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+                    (user.nom, user.prenom, user.email, user.num_tel, user.role,user.numero,
                      user.code_projet, user.date_prise_fonction, user.login(),
                      hashlib.sha256(user.password.encode()).hexdigest()))
             else:
                 # Creation de l'objet user
                 user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
-                            entere_role.get(), enter_droit.get(), enter_region.get(), enter_unite.get())
+                            entere_role.get(), enter_region.get(), enter_unite.get())
                 user.genrate_login()
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
                 curseur.execute(
-                    'INSERT INTO users (nom, prenom, email, num_tel, role, droit,region, unite, login, password) VALUES (?,?,?,?,?,?,?,?,?,?)',
-                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.droit, user.region, user.unite,
+                    'INSERT INTO users (nom, prenom, email, num_tel, role, region, unite, login, password) VALUES (?,?,?,?,?,?,?,?,?)',
+                    (user.nom, user.prenom, user.email, user.num_tel, user.role, user.region, user.unite,
                      user.login, hashlib.sha256(user.password.encode()).hexdigest()))
 
-            # Vérification du droit
+            # Vérification du role
             while True:
-                droit = enter_droit.get()
+                role = entere_role.get()
                 # si le droit n'est pas correct, afficher un message d'erreur
-                if droit not in ['md', 'cm', 'etc', 'sc']:
-                    messagebox.showerror("Erreur", "Droit incorrect, veuillez réessayer.")
+                if role not in ['Medecin', 'Commerciale', 'Autres', 'sc']:
+                    messagebox.showerror("Erreur", "Role incorrect, veuillez réessayer.")
                     return
                 else:
                     break
@@ -275,7 +265,8 @@ def ajout_user():
     # Recuperation de l'année choisie
     def combobox_calllback(choice):
         choix_anne = choice
-
+    def combobox_calllback_role(choice):
+        choix_role = choice
     def retour():
         frame_ajout_user.pack_forget()
         frame_ajouter.pack_forget()
@@ -308,10 +299,8 @@ def ajout_user():
     enter_num_tel = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Numero de telephone')
     enter_num_tel.pack(pady=10)
 
-    enter_droit = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Droit')
-    enter_droit.pack(pady=10)
 
-    entere_role = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Role')
+    entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale','Autres'],command=combobox_calllback_role)
     entere_role.pack(pady=10)
 
     enter_size = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='Taille du mot de passe')
@@ -374,16 +363,14 @@ def modif_user():
                     if option_menu.get() == "Numero de telephone":
                         user.set_num_tel(enter_modif.get())
                         curseur.execute('UPDATE users SET num_tel = ? WHERE login = ?', (user.num_tel, enter_nom.get()))
-                    if option_menu.get() == "Droit":
+                    if option_menu.get() == "Role":
                         # Verification du droit
                         if enter_modif.get() not in ['md', 'cm', 'etc','sc']:
                             messagebox.showerror("Erreur", "Droit incorrect")
                         else:
                             user.set_droit(enter_modif.get())
-                            curseur.execute('UPDATE users SET droit = ? WHERE login = ?', (user.droit, enter_nom.get()))
-                    if option_menu.get() == "Role":
-                        user.set_role(enter_modif.get())
-                        curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.role, enter_nom.get()))
+                            curseur.execute('UPDATE users SET role = ? WHERE login = ?', (user.role, enter_nom.get()))
+
                     connexion.commit()
             # Si l'utilisateur n'est pas trouvé, afficher un message d'erreur
             if not user_trouve:
@@ -413,7 +400,7 @@ def modif_user():
     enter_nom = ctk.CTkEntry(frame_modif_user, fg_color="transparent", font=("Arial", 20), width=300, placeholder_text='login')
     enter_nom.pack(pady=10)
     # Creation de la liste déroulante pour les années
-    options = ["Nom", "Prenom", "Email", "Numero de telephone", "Droit", "Role"]
+    options = ["Nom", "Prenom", "Email", "Numero de telephone", "Role"]
     option_menu = ctk.CTkOptionMenu(frame_modif_user, values=options)
     option_menu.pack(pady=10)
 
@@ -510,7 +497,7 @@ def document_scientifique(log):
     data = curseur.execute('SELECT * FROM scientifique WHERE login = ?', (log,)).fetchall()
     for info in data:
         # Creation de l'objet scientifique
-        user = Scientifique(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10],info[11],info[12])
+        user = Scientifique(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10],info[11])
     # Verification si l'utilisateur est responsable
     if user.savoir_responsable():
         ctk.CTkLabel(frame_science, text="Vous êtes responsable", fg_color="transparent", font=("Arial", 20)).pack()
@@ -531,13 +518,13 @@ def affichage_document(log):
     data = curseur.execute('SELECT * FROM users WHERE login = ?', (log,)).fetchall()
     for info in data :
         # Creation de l'objet user
-        user = User(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9],info[10])
+        user = User(info[1],info[2],info[3],info[4],info[5],info[6],info[7],info[8],info[9])
     # Verification du droit pour l'affichage des documents
-    if user.droit() == 'md':
+    if user.role() == 'md':
         affichage_doc_medecin()
-    elif user.droit() == 'cm':
+    elif user.role() == 'cm':
         affichage_doc_commericale()
-    elif user.droit() == 'etc':
+    elif user.role() == 'etc':
         affichage_doc_collaborateur()
     else:
         messagebox.showerror('Erreur', 'Erreur de role')
@@ -596,3 +583,5 @@ def affichage_doc_collaborateur():
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
+mainframe()
+windows.mainloop()
