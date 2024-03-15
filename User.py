@@ -1,4 +1,4 @@
-# ce fichier contient les classes User et Scientifique
+# Description: Ce fichier contient la définition des classes User et Scientifique
 
 # Importation des modules
 import string
