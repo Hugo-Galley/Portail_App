@@ -78,7 +78,7 @@ def connexion_user():
                     windows.destroy()
         # En cas d'erreur, afficher un message d'erreur
         except Exception as e:
-            messagebox.showerror("Erreur", f"Une erreur s'est produite : {e}")
+            messagebox.showerror("Erreur", f"Une erreur s est produite : {e}")
 
     def toggle_show_password():
         if show_password.get():
@@ -228,7 +228,7 @@ def ajout_user():
             while True:
                 role = entere_role.get()
                 # si le droit n'est pas correct, afficher un message d'erreur
-                if role not in ['Medecin', 'Commerciale', 'Autres', 'sc']:
+                if role not in ['Medecin', 'Commerciale', 'Autres', 'Scientifique']:
                     messagebox.showerror("Erreur", "Role incorrect, veuillez réessayer.")
                     return
                 else:
@@ -248,7 +248,7 @@ def ajout_user():
 
     def affichage_scientifique():
         # Si le bouton est activé, afficher les champs supplémentaires
-        if switch_var.get() == True:
+        if combobox_calllback_mdp() == "Scientifique":
             entere_numero.pack(pady=10)
             label_prise_fonction.pack(pady=10)
             enter_date_prise_fonction.pack(pady=10)
@@ -324,7 +324,7 @@ def ajout_user():
 
     ctk.CTkLabel(frame_ajout_user, text="Role", fg_color="transparent", font=("Arial", 20)).pack()
 
-    entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale', 'Autres'],
+    entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale','Scientifique', 'Autres'],
                                   command=combobox_calllback_role)
     entere_role.pack(pady=10)
     ctk.CTkLabel(frame_ajout_user, text="Taille MDP", fg_color="transparent", font=("Arial", 20)).pack()
@@ -513,7 +513,7 @@ def list_user():
     Logo.pack(pady=40)
     for user in data:
         label_nom = ctk.CTkLabel(frame_list_user,
-                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Droit {user[6]} Unite : {user[7]} Login : {user[9]}',
+                                 text=f'Nom : {user[1]} Prenom : {user[2]} Email : {user[3]} Numéro de téléphone : {user[4]} Rôle : {user[5]} Unite : {user[7]} Login : {user[9]}',
                                  fg_color="transparent", font=("Arial", 20))
         ctk.CTkLabel(frame_list_user, text="---------------------------------------------", fg_color="transparent",
                      font=("Arial", 12)).pack()
@@ -565,13 +565,13 @@ def affichage_document(log):
     data = curseur.execute('SELECT * FROM users WHERE login = ?', (log,)).fetchall()
     for info in data:
         # Creation de l'objet user
-        user = User(info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8], info[9])
+        user = User(info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8])
     # Verification du droit pour l'affichage des documents
-    if user.role() == 'md':
+    if user.role == 'Medecin':
         affichage_doc_medecin()
-    elif user.role() == 'cm':
+    elif user.role == 'Commerciale':
         affichage_doc_commericale()
-    elif user.role() == 'etc':
+    elif user.role == 'Autres':
         affichage_doc_collaborateur()
     else:
         messagebox.showerror('Erreur', 'Erreur de role')
@@ -631,3 +631,6 @@ def affichage_doc_collaborateur():
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
+
+mainframe()
+windows.mainloop()
