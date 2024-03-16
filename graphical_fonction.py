@@ -265,15 +265,14 @@ def ajout_user():
         # Si le bouton est activé, afficher les champs supplémentaires
         if switch_var.get() == True:
             entere_numero.pack(pady=10)
-            label_prise_fonction.pack(pady=10)
-            enter_date_prise_fonction.pack(pady=10)
+            frame_prise_fonction.pack(pady=10)
             enter_code_projet.pack(pady=10)
+            frame_prise_fonction.pack(pady=10)
         # Sinon, les cacher
         else:
             entere_numero.pack_forget()
-            enter_date_prise_fonction.pack_forget()
             enter_code_projet.pack_forget()
-            label_prise_fonction.pack_forget()
+            frame_prise_fonction.pack_forget()
 
     choix_anne = 2024
 
@@ -345,7 +344,6 @@ def ajout_user():
     enter_size = ctk.CTkComboBox(frame_taille_mdp, values=['8', '10', '12', '14', '16', '18', '20', '22', '24', '26'],
                                  command=combobox_calllback_mdp)
     enter_size.pack(side=ctk.RIGHT)  # Place la combobox à droite
-
     label_region = ctk.CTkLabel(frame_region, text="Région", font=("Arial", 20))
     label_region.pack(side=ctk.LEFT, padx=(0, 10))  # Place le label à gauche avec un padding seulement à droite
 
@@ -359,13 +357,16 @@ def ajout_user():
 
     entere_numero = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                  placeholder_text='Numero de labo')
-    label_prise_fonction = ctk.CTkLabel(frame_ajout_user, text="Date de prise de fonction", fg_color="transparent",
-                                        font=("Arial", 20))
+
+    frame_prise_fonction = ctk.CTkFrame(frame_ajout_user)
+    label_prise_fonction = ctk.CTkLabel(frame_prise_fonction, text="Date de prise de fonction", fg_color="transparent",
+                                        font=("Arial", 20)).pack(side=ctk.LEFT, padx=(0, 10))
+
     # Creation de la liste déroulante pour l'année de prise de fonction
     liste_anne = ['2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013',
                   '2012', '2011', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001',
                   '2000', '1999', '1998', '1997']
-    enter_date_prise_fonction = ctk.CTkComboBox(frame_ajout_user, values=liste_anne, command=combobox_calllback)
+    enter_date_prise_fonction = ctk.CTkComboBox(frame_prise_fonction, values=liste_anne, command=combobox_calllback).pack(side=ctk.RIGHT)
 
     enter_code_projet = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
                                      placeholder_text='Code du projet')
