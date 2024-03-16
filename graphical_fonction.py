@@ -468,6 +468,8 @@ def suppr_user():
 
                     return
                 else:
+                    # Suppression de l'utilisateur de la base de données
+                    curseur.execute('DELETE FROM users WHERE login = ?', (login,))
                     messagebox.showerror(title="Reussite", message="Utilisateur supprimé avec succès")
                     break
 
