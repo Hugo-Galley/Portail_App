@@ -201,7 +201,7 @@ def ajout_user():
                     return
                 # Creation de l'objet scientifique
                 user = Scientifique(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
-                                    entere_role.get(), enter_region.get(), enter_unite.get(),
+                                    entere_role.get(), enter_region.get(), enter_region.get(),
                                     entere_numero.get(), enter_code_projet.get(), enter_date_prise_fonction.get())
                 # Génération du login et du mot de passe
                 user.genrate_login()
@@ -215,7 +215,7 @@ def ajout_user():
             else:
                 # Creation de l'objet user
                 user = User(enter_nom.get(), enter_prenom.get(), enter_email.get(), enter_num_tel.get(),
-                            entere_role.get(), enter_region.get(), enter_unite.get())
+                            entere_role.get(), enter_region.get(), enter_region.get())
                 user.genrate_login()
                 user.generate_password(enter_size.get())
                 # Insertion de l'utilisateur dans la base de données
@@ -322,23 +322,37 @@ def ajout_user():
                                  placeholder_text='Numero de telephone')
     enter_num_tel.pack(pady=10)
 
-    ctk.CTkLabel(frame_ajout_user, text="Role", fg_color="transparent", font=("Arial", 20)).pack()
+    frame_roles = ctk.CTkFrame(frame_ajout_user)
+    frame_roles.pack(fill=ctk.X, padx=10, pady=10)
 
-    entere_role = ctk.CTkComboBox(frame_ajout_user, values=['Medecin', 'Commerciale','Scientifique', 'Autres'],
+    frame_taille_mdp = ctk.CTkFrame(frame_ajout_user)
+    frame_taille_mdp.pack(fill=ctk.X, padx=10, pady=10)
+
+    frame_region = ctk.CTkFrame(frame_ajout_user)
+    frame_region.pack(fill=ctk.X, padx=10, pady=10)
+
+    # Création des combobox dans les cadres respectifs
+    label_role = ctk.CTkLabel(frame_roles, text="Role", font=("Arial", 20))
+    label_role.pack(side=ctk.LEFT, padx=(0, 10))  # Place le label à gauche avec un padding seulement à droite
+
+    entere_role = ctk.CTkComboBox(frame_roles, values=['Medecin', 'Commerciale', 'Scientifique', 'Autres'],
                                   command=combobox_calllback_role)
-    entere_role.pack(pady=10)
-    ctk.CTkLabel(frame_ajout_user, text="Taille MDP", fg_color="transparent", font=("Arial", 20)).pack()
-    enter_size = ctk.CTkComboBox(frame_ajout_user, values=['8', '10', '12', '14', '16', '18', '20', '22', '24', '26'],command=combobox_calllback_mdp)
-    enter_size.pack(pady=10)
+    entere_role.pack(side=ctk.RIGHT)  # Place la combobox à droite
 
-    enter_region = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
-                                placeholder_text='Region')
-    enter_region.pack(pady=10)
+    label_taille_mdp = ctk.CTkLabel(frame_taille_mdp, text="Taille MDP", font=("Arial", 20))
+    label_taille_mdp.pack(side=ctk.LEFT, padx=(0, 10))  # Place le label à gauche avec un padding seulement à droite
 
-    enter_unite = ctk.CTkEntry(frame_ajout_user, fg_color="transparent", font=("Arial", 20), width=300,
-                               placeholder_text='Unite')
-    enter_unite.pack(pady=10)
+    enter_size = ctk.CTkComboBox(frame_taille_mdp, values=['8', '10', '12', '14', '16', '18', '20', '22', '24', '26'],
+                                 command=combobox_calllback_mdp)
+    enter_size.pack(side=ctk.RIGHT)  # Place la combobox à droite
 
+    label_region = ctk.CTkLabel(frame_region, text="Région", font=("Arial", 20))
+    label_region.pack(side=ctk.LEFT, padx=(0, 10))  # Place le label à gauche avec un padding seulement à droite
+
+    enter_region = ctk.CTkComboBox(frame_region,
+                                   values=['Strasbourg', 'Rennes', 'Marseille', 'Grenoble', 'Bordeaux', 'Toulouse'],
+                                   command=combobox_calllback)
+    enter_region.pack(side=ctk.RIGHT)  # Place la combobox à droite
     # Creation du bouton pour activer ou désactiver les champs supplémentaires pour le scientifique
     ctk.CTkSwitch(frame_ajout_user, text="Scientifique", variable=switch_var, onvalue=True,
                   offvalue=False, command=affichage_scientifiquee).pack()
@@ -633,3 +647,5 @@ def affichage_doc_collaborateur():
     ctk.CTkButton(frame_doc_collaborateur, text='Quitter', font=('Arial', 20), command=retour).pack(pady=10)
     # Empaquetage de la frame
     frame_doc_collaborateur.pack(expand=YES)
+mainframe()
+windows.mainloop()
