@@ -5,6 +5,7 @@ from User import *
 import customtkinter as ctk
 from tkinter import messagebox, YES
 import sqlite3
+cpt_tentative = 0
 
 # Connexion à la base de données
 connexion = sqlite3.connect('bdd.db')
@@ -45,7 +46,7 @@ def connexion_user():
     windows.geometry("500x400")
 
     def verif():
-        cpt_tentative = 0
+        global cpt_tentative
         # Essayer de se connecter à la base de données
         try:
             liste_user = []
@@ -73,6 +74,7 @@ def connexion_user():
             else:
                 messagebox.showerror("Erreur", "Login ou mot de passe incorrect")
                 cpt_tentative += 1
+                print(cpt_tentative)
                 if cpt_tentative == 3:
                     messagebox.showerror("Erreur", "Nombre de tentative dépassé")
                     windows.destroy()
